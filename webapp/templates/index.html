@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Readmission Predictor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+        
+        /* Navbar */
+        nav {
+            background: #2b6cb0;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav h1 { color: white; font-size: 20px; }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+        nav a:hover { background: rgba(255,255,255,0.3); }
+
+        /* Main */
+        .main {
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Form Card */
+        .form-card {
+            background: white;
+            padding: 36px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 480px;
+        }
+        .form-card h2 {
+            color: #2d3748;
+            margin-bottom: 6px;
+            font-size: 22px;
+        }
+        .form-card p {
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: span 2; }
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+        input, select {
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #2d3748;
+            transition: border 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #2b6cb0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+        button:hover { background: #2c5282; }
+
+        /* Result Card */
+        .result-card {
+            background: white;
+            padding: 36px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .risk-box {
+            text-align: center;
+            padding: 24px;
+            border-radius: 12px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+        }
+        .risk-box h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+        .risk-box p { color: #4a5568; font-size: 15px; }
+
+        /* Gauge */
+        .gauge-container { text-align: center; }
+        .gauge-container h3 {
+            color: #4a5568;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        /* Chart */
+        .chart-container h3 {
+            color: #4a5568;
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>🏥 Hospital Readmission Predictor</h1>
+        <a href="/history">📋 View History</a>
+    </nav>
+
+    <div class="main">
+        <!-- Form -->
+        <div class="form-card">
+            <h2>Patient Details</h2>
+            <p>Fill in the patient information to predict 30-day readmission risk</p>
+            <form action="/predict" method="POST">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Age Group (1-9)</label>
+                        <input type="number" name="age" min="1" max="9" required placeholder="e.g. 7">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select name="gender">
+                            <option value="1">Male</option>
+                            <option value="0">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Time in Hospital (days)</label>
+                        <input type="number" name="time_in_hospital" min="1" max="14" required placeholder="e.g. 4">
+                    </div>
+                    <div class="form-group">
+                        <label>Num Medications</label>
+                        <input type="number" name="num_medications" min="1" max="80" required placeholder="e.g. 15">
+                    </div>
+                    <div class="form-group">
+                        <label>Num Lab Procedures</label>
+                        <input type="number" name="num_lab_procedures" min="1" max="100" required placeholder="e.g. 40">
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Diagnoses</label>
+                        <input type="number" name="number_diagnoses" min="1" max="16" required placeholder="e.g. 5">
+                    </div>
+                    <div class="form-group">
+                        <label>Insulin Given?</label>
+                        <select name="insulin">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Medication Changed?</label>
+                        <select name="change">
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit">🔍 Predict Readmission Risk</button>
+            </form>
+        </div>
+
+        <!-- Result -->
+        {% if prediction %}
+        <div class="result-card">
+            <div class="risk-box">
+                <h2 style="color: {{ color }}">{{ prediction }}</h2>
+                <p>Readmission Probability: <strong>{{ probability }}%</strong></p>
+            </div>
+
+            <div class="gauge-container">
+                <h3>📊 Risk Gauge</h3>
+                <canvas id="gaugeChart" height="160"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>🔑 Top Risk Factors</h3>
+                <canvas id="featureChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <script>
+            // Gauge Chart
+            new Chart(document.getElementById('gaugeChart'), {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [{{ probability }}, {{ 100 - probability }}],
+                        backgroundColor: ['{{ color }}', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    circumference: 180,
+                    rotation: -90,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+
+            // Feature Importance Chart
+            new Chart(document.getElementById('featureChart'), {
+                type: 'bar',
+                data: {
+                    labels: {{ chart_labels | tojson }},
+                    datasets: [{
+                        label: 'Importance %',
+                        data: {{ chart_values | tojson }},
+                        backgroundColor: '#4299e1',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        </script>
+        {% endif %}
+    </div>
+</body>
+</html>
