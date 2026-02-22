@@ -1,0 +1,12 @@
+cd C:\Users\faiza\hospital_readmission\webapp
+```
+
+Then create the file in VS Code and paste this:
+```
+flask
+flask-sqlalchemy
+pandas
+numpy
+scikit-learn
+imbalanced-learn
+gunicorn
