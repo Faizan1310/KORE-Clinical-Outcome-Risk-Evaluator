@@ -8,8 +8,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
-        
-        /* Navbar */
+
         nav {
             background: #2b6cb0;
             padding: 16px 40px;
@@ -18,137 +17,111 @@
             align-items: center;
         }
         nav h1 { color: white; font-size: 20px; }
+        .nav-links { display: flex; gap: 10px; }
         nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 15px;
+            color: white; text-decoration: none; font-size: 14px;
             background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 8px 14px; border-radius: 8px;
         }
         nav a:hover { background: rgba(255,255,255,0.3); }
 
-        /* Main */
-        .main {
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            gap: 30px;
-            flex-wrap: wrap;
+        .main { display: flex; justify-content: center; padding: 30px 20px; gap: 24px; flex-wrap: wrap; }
+
+        .card {
+            background: white; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 28px;
         }
 
-        /* Form Card */
-        .form-card {
-            background: white;
-            padding: 36px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 480px;
-        }
-        .form-card h2 {
-            color: #2d3748;
-            margin-bottom: 6px;
-            font-size: 22px;
-        }
-        .form-card p {
-            color: #718096;
-            font-size: 13px;
-            margin-bottom: 24px;
-        }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
+        .form-card { width: 100%; max-width: 480px; }
+        .form-card h2 { color: #2d3748; margin-bottom: 6px; font-size: 20px; }
+        .form-card p { color: #718096; font-size: 13px; margin-bottom: 20px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .form-group { display: flex; flex-direction: column; }
-        .form-group.full { grid-column: span 2; }
-        label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 5px;
-        }
+        label { font-size: 12px; font-weight: 600; color: #4a5568; margin-bottom: 5px; }
         input, select {
-            padding: 10px 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #2d3748;
-            transition: border 0.2s;
+            padding: 9px 12px; border: 2px solid #e2e8f0;
+            border-radius: 8px; font-size: 14px; color: #2d3748; transition: border 0.2s;
         }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #4299e1;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #2b6cb0;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
+        input:focus, select:focus { outline: none; border-color: #4299e1; }
+        button[type="submit"] {
+            width: 100%; padding: 13px; background: #2b6cb0;
+            color: white; border: none; border-radius: 8px;
+            font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 16px;
             transition: background 0.2s;
         }
-        button:hover { background: #2c5282; }
+        button[type="submit"]:hover { background: #2c5282; }
 
-        /* Result Card */
-        .result-card {
-            background: white;
-            padding: 36px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
+        .result-col { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 18px; }
+
         .risk-box {
-            text-align: center;
-            padding: 24px;
-            border-radius: 12px;
-            background: #f7fafc;
-            border: 2px solid #e2e8f0;
+            text-align: center; padding: 20px; border-radius: 12px;
+            background: #f7fafc; border: 2px solid #e2e8f0;
         }
-        .risk-box h2 {
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
+        .risk-box h2 { font-size: 30px; font-weight: 800; margin-bottom: 6px; }
         .risk-box p { color: #4a5568; font-size: 15px; }
 
-        /* Gauge */
-        .gauge-container { text-align: center; }
-        .gauge-container h3 {
-            color: #4a5568;
-            font-size: 15px;
-            margin-bottom: 12px;
+        /* AI Report */
+        .ai-section h3 { font-size: 15px; font-weight: 700; color: #2d3748; margin-bottom: 10px; }
+        .ai-report-box {
+            background: #ebf8ff; border-left: 4px solid #4299e1;
+            padding: 14px; border-radius: 8px;
+            font-size: 13px; color: #2d3748; line-height: 1.6;
+        }
+        .ai-rec-box {
+            background: #f0fff4; border-left: 4px solid #48bb78;
+            padding: 14px; border-radius: 8px;
+            font-size: 13px; color: #2d3748; line-height: 1.7;
+            white-space: pre-line;
         }
 
-        /* Chart */
-        .chart-container h3 {
-            color: #4a5568;
-            font-size: 15px;
-            margin-bottom: 12px;
+        /* Chatbot */
+        .chatbot-card { width: 100%; max-width: 980px; }
+        .chatbot-card h3 { font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 14px; }
+        .chat-window {
+            height: 260px; overflow-y: auto;
+            border: 2px solid #e2e8f0; border-radius: 10px;
+            padding: 14px; background: #f7fafc; margin-bottom: 12px;
+            display: flex; flex-direction: column; gap: 10px;
         }
+        .chat-msg { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+        .chat-msg.user { background: #2b6cb0; color: white; align-self: flex-end; border-bottom-right-radius: 3px; }
+        .chat-msg.bot { background: white; color: #2d3748; align-self: flex-start; border: 1px solid #e2e8f0; border-bottom-left-radius: 3px; }
+        .chat-msg.loading { color: #718096; font-style: italic; background: white; border: 1px solid #e2e8f0; align-self: flex-start; }
+
+        .chat-controls { display: flex; gap: 10px; align-items: center; }
+        .chat-controls select {
+            padding: 9px 12px; border: 2px solid #e2e8f0;
+            border-radius: 8px; font-size: 13px; width: 140px;
+        }
+        .chat-controls input {
+            flex: 1; padding: 9px 14px; border: 2px solid #e2e8f0;
+            border-radius: 8px; font-size: 14px;
+        }
+        .chat-controls input:focus { outline: none; border-color: #4299e1; }
+        .send-btn {
+            padding: 9px 20px; background: #2b6cb0; color: white;
+            border: none; border-radius: 8px; cursor: pointer;
+            font-size: 14px; font-weight: 600;
+        }
+        .send-btn:hover { background: #2c5282; }
     </style>
 </head>
 <body>
     <nav>
         <h1>🏥 Hospital Readmission Predictor</h1>
-        <a href="/history">📋 View History</a>
+        <div class="nav-links">
+            <a href="/insights">📈 AI Insights</a>
+            <a href="/history">📋 History</a>
+        </div>
     </nav>
 
     <div class="main">
         <!-- Form -->
-        <div class="form-card">
+        <div class="card form-card">
             <h2>Patient Details</h2>
-            <p>Fill in the patient information to predict 30-day readmission risk</p>
+            <p>Fill in patient information to predict 30-day readmission risk</p>
             <form action="/predict" method="POST">
                 <div class="form-grid">
                     <div class="form-group">
@@ -197,70 +170,125 @@
             </form>
         </div>
 
-        <!-- Result -->
+        <!-- Results -->
         {% if prediction %}
-        <div class="result-card">
-            <div class="risk-box">
+        <div class="result-col">
+            <!-- Risk Result -->
+            <div class="card risk-box">
                 <h2 style="color: {{ color }}">{{ prediction }}</h2>
                 <p>Readmission Probability: <strong>{{ probability }}%</strong></p>
             </div>
 
-            <div class="gauge-container">
-                <h3>📊 Risk Gauge</h3>
-                <canvas id="gaugeChart" height="160"></canvas>
+            <!-- Charts -->
+            <div class="card">
+                <h3 style="font-size:14px;font-weight:700;color:#2d3748;margin-bottom:10px;">📊 Risk Gauge</h3>
+                <canvas id="gaugeChart" height="140"></canvas>
+            </div>
+            <div class="card">
+                <h3 style="font-size:14px;font-weight:700;color:#2d3748;margin-bottom:10px;">🔑 Top Risk Factors</h3>
+                <canvas id="featureChart" height="180"></canvas>
             </div>
 
-            <div class="chart-container">
-                <h3>🔑 Top Risk Factors</h3>
-                <canvas id="featureChart" height="200"></canvas>
+            <!-- AI Report -->
+            <div class="card ai-section">
+                <h3>🩺 AI Doctor Report</h3>
+                <div class="ai-report-box">{{ ai_report }}</div>
+            </div>
+
+            <!-- AI Recommendations -->
+            <div class="card ai-section">
+                <h3>✅ AI Recommendations</h3>
+                <div class="ai-rec-box">{{ ai_recommendations }}</div>
             </div>
         </div>
 
         <script>
-            // Gauge Chart
             new Chart(document.getElementById('gaugeChart'), {
                 type: 'doughnut',
                 data: {
-                    datasets: [{
-                        data: [{{ probability }}, {{ 100 - probability }}],
-                        backgroundColor: ['{{ color }}', '#e2e8f0'],
-                        borderWidth: 0
-                    }]
+                    datasets: [{ data: [{{ probability }}, {{ 100 - probability }}],
+                    backgroundColor: ['{{ color }}', '#e2e8f0'], borderWidth: 0 }]
                 },
                 options: {
-                    circumference: 180,
-                    rotation: -90,
-                    cutout: '75%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false }
-                    }
+                    circumference: 180, rotation: -90, cutout: '75%',
+                    plugins: { legend: { display: false }, tooltip: { enabled: false } }
                 }
             });
-
-            // Feature Importance Chart
             new Chart(document.getElementById('featureChart'), {
                 type: 'bar',
                 data: {
                     labels: {{ chart_labels | tojson }},
-                    datasets: [{
-                        label: 'Importance %',
-                        data: {{ chart_values | tojson }},
-                        backgroundColor: '#4299e1',
-                        borderRadius: 6
-                    }]
+                    datasets: [{ label: 'Importance %', data: {{ chart_values | tojson }},
+                    backgroundColor: '#4299e1', borderRadius: 6 }]
                 },
                 options: {
                     indexAxis: 'y',
                     plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { grid: { display: false } }
-                    }
+                    scales: { x: { grid: { display: false } }, y: { grid: { display: false } } }
                 }
             });
         </script>
         {% endif %}
     </div>
+
+    <!-- AI Chatbot -->
+    <div class="main" style="padding-top: 0;">
+        <div class="card chatbot-card">
+            <h3>💬 AI Medical Chatbot <span style="font-size:12px;color:#718096;font-weight:400;">(Multilingual — ask in any language)</span></h3>
+            <div class="chat-window" id="chatWindow">
+                <div class="chat-msg bot">👋 Hello! I'm your AI medical assistant. Ask me anything about hospital readmission risk in any language!</div>
+            </div>
+            <div class="chat-controls">
+                <select id="langSelect">
+                    <option value="English">🇬🇧 English</option>
+                    <option value="Urdu">🇵🇰 Urdu</option>
+                    <option value="Arabic">🇸🇦 Arabic</option>
+                    <option value="French">🇫🇷 French</option>
+                    <option value="Spanish">🇪🇸 Spanish</option>
+                    <option value="Hindi">🇮🇳 Hindi</option>
+                    <option value="Chinese">🇨🇳 Chinese</option>
+                </select>
+                <input type="text" id="chatInput" placeholder="Ask a question in any language..." 
+                       onkeypress="if(event.key==='Enter') sendChat()">
+                <button class="send-btn" onclick="sendChat()">Send ➤</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function sendChat() {
+            const input = document.getElementById('chatInput');
+            const lang = document.getElementById('langSelect').value;
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const chatWindow = document.getElementById('chatWindow');
+
+            // Add user message
+            chatWindow.innerHTML += `<div class="chat-msg user">${msg}</div>`;
+            chatWindow.innerHTML += `<div class="chat-msg loading" id="loading">⏳ Thinking...</div>`;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            input.value = '';
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: msg,
+                        language: lang,
+                        patient_context: '{{ prediction if prediction else "" }}'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('loading').remove();
+                chatWindow.innerHTML += `<div class="chat-msg bot">${data.response}</div>`;
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            } catch (err) {
+                document.getElementById('loading').remove();
+                chatWindow.innerHTML += `<div class="chat-msg bot">Sorry, something went wrong. Please try again.</div>`;
+            }
+        }
+    </script>
 </body>
 </html>

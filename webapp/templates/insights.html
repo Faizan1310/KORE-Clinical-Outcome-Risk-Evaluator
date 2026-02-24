@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Insights</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+
+        nav {
+            background: #2b6cb0; padding: 16px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        nav h1 { color: white; font-size: 20px; }
+        .nav-links { display: flex; gap: 10px; }
+        nav a {
+            color: white; text-decoration: none; font-size: 14px;
+            background: rgba(255,255,255,0.2); padding: 8px 14px; border-radius: 8px;
+        }
+        nav a:hover { background: rgba(255,255,255,0.3); }
+
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+
+        h2 { color: #2d3748; font-size: 24px; margin-bottom: 24px; }
+
+        /* Stat cards */
+        .stats-row { display: flex; gap: 18px; margin-bottom: 24px; flex-wrap: wrap; }
+        .stat-card {
+            background: white; border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 22px 28px; flex: 1; min-width: 160px;
+            border-top: 4px solid #2b6cb0;
+        }
+        .stat-card h3 { font-size: 32px; font-weight: 800; color: #2b6cb0; }
+        .stat-card p { font-size: 13px; color: #718096; margin-top: 4px; }
+
+        /* AI Insights box */
+        .insights-card {
+            background: white; border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 28px;
+        }
+        .insights-card h3 {
+            font-size: 18px; font-weight: 700; color: #2d3748;
+            margin-bottom: 18px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .insights-text {
+            background: #ebf8ff; border-left: 4px solid #4299e1;
+            padding: 18px; border-radius: 8px;
+            font-size: 14px; color: #2d3748;
+            line-height: 1.8; white-space: pre-line;
+        }
+
+        /* Empty state */
+        .empty {
+            text-align: center; padding: 80px 20px; color: #718096;
+        }
+        .empty h3 { font-size: 20px; margin-bottom: 10px; }
+        .empty a {
+            display: inline-block; margin-top: 16px;
+            background: #2b6cb0; color: white;
+            padding: 12px 24px; border-radius: 8px;
+            text-decoration: none; font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>🏥 Hospital Readmission Predictor</h1>
+        <div class="nav-links">
+            <a href="/">🔍 New Prediction</a>
+            <a href="/history">📋 History</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>📈 AI Insights Dashboard</h2>
+
+        {% if insights %}
+        <!-- Stat Cards -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <h3>{{ total }}</h3>
+                <p>Total Predictions Made</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ high_risk }}</h3>
+                <p>High Risk Patients</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ total - high_risk }}</h3>
+                <p>Low Risk Patients</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ avg_prob }}%</h3>
+                <p>Average Risk Probability</p>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="insights-card">
+            <h3>🤖 AI Analysis</h3>
+            <div class="insights-text">{{ insights }}</div>
+        </div>
+
+        {% else %}
+        <div class="insights-card">
+            <div class="empty">
+                <h3>No predictions yet!</h3>
+                <p>Make some predictions first and come back to see AI-generated insights and trends.</p>
+                <a href="/">Make Your First Prediction</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
