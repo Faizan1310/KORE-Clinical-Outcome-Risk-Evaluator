@@ -3,156 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prediction History</title>
+    <title>KORE — Prediction History</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
 
         nav {
-            background: #2b6cb0;
+            background: linear-gradient(135deg, #1B3A6B, #065A82);
             padding: 16px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        nav h1 { color: white; font-size: 20px; }
+        .nav-brand { display: flex; flex-direction: column; }
+        .nav-brand h1 { color: #02C39A; font-size: 22px; font-weight: 800; letter-spacing: 2px; }
+        .nav-brand span { color: #CADCFC; font-size: 11px; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 10px; }
         nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 15px;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 8px;
+            color: white; text-decoration: none; font-size: 13px;
+            background: rgba(255,255,255,0.15); padding: 8px 16px;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
         }
-        nav a:hover { background: rgba(255,255,255,0.3); }
+        nav a:hover { background: rgba(255,255,255,0.25); }
+        nav a.danger { background: rgba(220,53,69,0.3); border-color: rgba(220,53,69,0.5); }
+        nav a.danger:hover { background: rgba(220,53,69,0.5); }
 
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        .header h2 { color: #2d3748; font-size: 22px; }
-        .clear-btn {
-            background: #e53e3e;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-        }
-        .clear-btn:hover { background: #c53030; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
 
-        table {
-            width: 100%;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border-collapse: collapse;
-            overflow: hidden;
+        .page-header { margin-bottom: 24px; }
+        .page-header h2 { color: #1B3A6B; font-size: 24px; font-weight: 800; }
+        .page-header p { color: #718096; font-size: 14px; margin-top: 4px; }
+
+        .card {
+            background: white; border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;
         }
+
+        table { width: 100%; border-collapse: collapse; }
         thead {
-            background: #2b6cb0;
-            color: white;
+            background: linear-gradient(135deg, #1B3A6B, #065A82);
         }
-        th {
-            padding: 14px 16px;
-            text-align: left;
-            font-size: 13px;
-            font-weight: 600;
+        thead th {
+            padding: 14px 16px; text-align: left;
+            color: white; font-size: 12px;
+            font-weight: 700; letter-spacing: 1px;
         }
-        td {
-            padding: 14px 16px;
-            font-size: 14px;
-            color: #4a5568;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: #f7fafc; }
+        tbody tr { border-bottom: 1px solid #f0f4f8; transition: background 0.15s; }
+        tbody tr:hover { background: #f7fafc; }
+        tbody td { padding: 14px 16px; font-size: 13px; color: #2d3748; }
 
         .badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
+            display: inline-block; padding: 4px 12px;
+            border-radius: 20px; font-size: 11px; font-weight: 700;
         }
-        .high { background: #fed7d7; color: #c53030; }
-        .low { background: #c6f6d5; color: #276749; }
+        .badge.high { background: #fff5f5; color: #e53e3e; border: 1px solid #fed7d7; }
+        .badge.low  { background: #f0fff4; color: #38a169; border: 1px solid #c6f6d5; }
+
+        .ai-text {
+            max-width: 280px; font-size: 12px; color: #4a5568;
+            line-height: 1.5; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        }
 
         .empty {
-            text-align: center;
-            padding: 60px;
-            color: #718096;
-            font-size: 16px;
+            text-align: center; padding: 80px 20px; color: #718096;
         }
+        .empty h3 { font-size: 20px; margin-bottom: 10px; color: #1B3A6B; }
+        .empty a {
+            display: inline-block; margin-top: 16px;
+            background: linear-gradient(135deg, #1B3A6B, #065A82);
+            color: white; padding: 12px 28px; border-radius: 8px;
+            text-decoration: none; font-weight: 700;
+        }
+
+        .footer {
+            text-align: center; padding: 20px;
+            color: #718096; font-size: 12px;
+            border-top: 1px solid #e2e8f0; margin-top: 40px;
+        }
+        .footer span { color: #02C39A; font-weight: 700; }
     </style>
 </head>
 <body>
+
     <nav>
-        <h1>🏥 Hospital Readmission Predictor</h1>
-        <a href="/">🔍 New Prediction</a>
+        <div class="nav-brand">
+            <h1>⬡ KORE</h1>
+            <span>CLINICAL OUTCOME RISK EVALUATOR</span>
+        </div>
+        <div class="nav-links">
+            <a href="/">🔍 New Assessment</a>
+            <a href="/insights">📈 AI Insights</a>
+            <a href="/clear_history" class="danger">🗑️ Clear History</a>
+        </div>
     </nav>
 
     <div class="container">
-        <div class="header">
+        <div class="page-header">
             <h2>📋 Prediction History</h2>
-            {% if records %}
-            <a href="/clear_history" class="clear-btn" onclick="return confirm('Clear all history?')">🗑️ Clear History</a>
-            {% endif %}
+            <p>All patient risk assessments performed by KORE</p>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Date & Time</th>
-                    <th>Age Group</th>
-                    <th>Gender</th>
-                    <th>Time in Hospital</th>
-                    <th>Medications</th>
-                    <th>Diagnoses</th>
-                    <th>Insulin</th>
-                    <th>Med Changed</th>
-                    <th>Probability</th>
-                    <th>Risk</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if records %}
+        <div class="card">
+            {% if records %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>DATE & TIME</th>
+                        <th>AGE</th>
+                        <th>GENDER</th>
+                        <th>STAY</th>
+                        <th>MEDS</th>
+                        <th>LABS</th>
+                        <th>DX</th>
+                        <th>INSULIN</th>
+                        <th>MED CHG</th>
+                        <th>RISK</th>
+                        <th>PROBABILITY</th>
+                        <th>AI REPORT PREVIEW</th>
+                    </tr>
+                </thead>
+                <tbody>
                     {% for r in records %}
                     <tr>
-                        <td>{{ r.id }}</td>
-                        <td>{{ r.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td><strong>{{ r.id }}</strong></td>
+                        <td>{{ r.date.strftime('%d %b %Y %H:%M') }}</td>
                         <td>{{ r.age }}</td>
                         <td>{{ r.gender }}</td>
-                        <td>{{ r.time_in_hospital }} days</td>
+                        <td>{{ r.time_in_hospital }}d</td>
                         <td>{{ r.num_medications }}</td>
+                        <td>{{ r.num_lab_procedures }}</td>
                         <td>{{ r.number_diagnoses }}</td>
                         <td>{{ r.insulin }}</td>
                         <td>{{ r.change }}</td>
-                        <td>{{ r.probability }}%</td>
                         <td>
-                            <span class="badge {% if r.risk == 'HIGH RISK' %}high{% else %}low{% endif %}">
-                                {{ r.risk }}
-                            </span>
+                            {% if r.risk == 'HIGH RISK' %}
+                                <span class="badge high">⚠️ HIGH RISK</span>
+                            {% else %}
+                                <span class="badge low">✅ LOW RISK</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ r.probability }}%</strong></td>
+                        <td>
+                            <div class="ai-text">{{ r.ai_report }}</div>
                         </td>
                     </tr>
                     {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="11" class="empty">No predictions yet. Make your first prediction!</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">
+                <h3>⬡ No assessments yet</h3>
+                <p>KORE hasn't evaluated any patients yet. Make your first prediction!</p>
+                <a href="/">Start Risk Assessment</a>
+            </div>
+            {% endif %}
+        </div>
     </div>
+
+    <div class="footer">
+        <span>⬡ KORE</span> — Clinical Outcome Risk Evaluator &nbsp;·&nbsp;
+        Powered by Random Forest ML &amp; Llama 3.3 70B
+    </div>
+
 </body>
 </html>

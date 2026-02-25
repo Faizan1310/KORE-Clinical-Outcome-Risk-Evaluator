@@ -3,27 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Readmission Predictor</title>
+    <title>KORE — Clinical Outcome Risk Evaluator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
 
         nav {
-            background: #2b6cb0;
+            background: linear-gradient(135deg, #1B3A6B, #065A82);
             padding: 16px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        nav h1 { color: white; font-size: 20px; }
+        .nav-brand { display: flex; flex-direction: column; }
+        .nav-brand h1 { color: #02C39A; font-size: 22px; font-weight: 800; letter-spacing: 2px; }
+        .nav-brand span { color: #CADCFC; font-size: 11px; letter-spacing: 1px; }
         .nav-links { display: flex; gap: 10px; }
         nav a {
-            color: white; text-decoration: none; font-size: 14px;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 14px; border-radius: 8px;
+            color: white; text-decoration: none; font-size: 13px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.2s;
         }
-        nav a:hover { background: rgba(255,255,255,0.3); }
+        nav a:hover { background: rgba(255,255,255,0.25); }
+
+        .hero {
+            background: linear-gradient(135deg, #1B3A6B, #065A82);
+            padding: 30px 40px;
+            text-align: center;
+            color: white;
+            border-bottom: 3px solid #02C39A;
+        }
+        .hero p { color: #CADCFC; font-size: 14px; margin-top: 6px; }
 
         .main { display: flex; justify-content: center; padding: 30px 20px; gap: 24px; flex-wrap: wrap; }
 
@@ -34,8 +48,15 @@
         }
 
         .form-card { width: 100%; max-width: 480px; }
-        .form-card h2 { color: #2d3748; margin-bottom: 6px; font-size: 20px; }
+        .form-card h2 { color: #2d3748; margin-bottom: 4px; font-size: 18px; }
         .form-card p { color: #718096; font-size: 13px; margin-bottom: 20px; }
+        .kore-tag {
+            display: inline-block;
+            background: #ebf8ff; color: #065A82;
+            font-size: 11px; font-weight: 700;
+            padding: 3px 10px; border-radius: 20px;
+            margin-bottom: 8px; letter-spacing: 1px;
+        }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .form-group { display: flex; flex-direction: column; }
@@ -44,88 +65,116 @@
             padding: 9px 12px; border: 2px solid #e2e8f0;
             border-radius: 8px; font-size: 14px; color: #2d3748; transition: border 0.2s;
         }
-        input:focus, select:focus { outline: none; border-color: #4299e1; }
+        input:focus, select:focus { outline: none; border-color: #065A82; }
         button[type="submit"] {
-            width: 100%; padding: 13px; background: #2b6cb0;
+            width: 100%; padding: 13px;
+            background: linear-gradient(135deg, #1B3A6B, #065A82);
             color: white; border: none; border-radius: 8px;
-            font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 16px;
-            transition: background 0.2s;
+            font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px;
+            letter-spacing: 1px; transition: opacity 0.2s;
         }
-        button[type="submit"]:hover { background: #2c5282; }
+        button[type="submit"]:hover { opacity: 0.9; }
 
         .result-col { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 18px; }
 
         .risk-box {
-            text-align: center; padding: 20px; border-radius: 12px;
+            text-align: center; padding: 24px; border-radius: 12px;
             background: #f7fafc; border: 2px solid #e2e8f0;
         }
-        .risk-box h2 { font-size: 30px; font-weight: 800; margin-bottom: 6px; }
+        .risk-box .kore-label { font-size: 11px; color: #718096; letter-spacing: 2px; margin-bottom: 8px; }
+        .risk-box h2 { font-size: 32px; font-weight: 800; margin-bottom: 6px; }
         .risk-box p { color: #4a5568; font-size: 15px; }
 
-        /* AI Report */
-        .ai-section h3 { font-size: 15px; font-weight: 700; color: #2d3748; margin-bottom: 10px; }
-        .ai-report-box {
-            background: #ebf8ff; border-left: 4px solid #4299e1;
-            padding: 14px; border-radius: 8px;
-            font-size: 13px; color: #2d3748; line-height: 1.6;
+        .ai-section h3 {
+            font-size: 14px; font-weight: 700; color: #2d3748;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
         }
-        .ai-rec-box {
-            background: #f0fff4; border-left: 4px solid #48bb78;
+        .ai-report-box {
+            background: #ebf8ff; border-left: 4px solid #065A82;
             padding: 14px; border-radius: 8px;
             font-size: 13px; color: #2d3748; line-height: 1.7;
+        }
+        .ai-rec-box {
+            background: #f0fff4; border-left: 4px solid #38a169;
+            padding: 14px; border-radius: 8px;
+            font-size: 13px; color: #2d3748; line-height: 1.8;
             white-space: pre-line;
         }
 
         /* Chatbot */
-        .chatbot-card { width: 100%; max-width: 980px; }
-        .chatbot-card h3 { font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 14px; }
+        .chatbot-card { width: 100%; max-width: 990px; }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .chat-header h3 { font-size: 15px; font-weight: 700; color: #2d3748; }
+        .chat-header span { font-size: 11px; color: #718096; }
+
         .chat-window {
-            height: 260px; overflow-y: auto;
+            height: 270px; overflow-y: auto;
             border: 2px solid #e2e8f0; border-radius: 10px;
             padding: 14px; background: #f7fafc; margin-bottom: 12px;
             display: flex; flex-direction: column; gap: 10px;
         }
         .chat-msg { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
-        .chat-msg.user { background: #2b6cb0; color: white; align-self: flex-end; border-bottom-right-radius: 3px; }
+        .chat-msg.user { background: linear-gradient(135deg, #1B3A6B, #065A82); color: white; align-self: flex-end; border-bottom-right-radius: 3px; }
         .chat-msg.bot { background: white; color: #2d3748; align-self: flex-start; border: 1px solid #e2e8f0; border-bottom-left-radius: 3px; }
         .chat-msg.loading { color: #718096; font-style: italic; background: white; border: 1px solid #e2e8f0; align-self: flex-start; }
 
         .chat-controls { display: flex; gap: 10px; align-items: center; }
         .chat-controls select {
             padding: 9px 12px; border: 2px solid #e2e8f0;
-            border-radius: 8px; font-size: 13px; width: 140px;
+            border-radius: 8px; font-size: 13px; width: 145px;
         }
         .chat-controls input {
             flex: 1; padding: 9px 14px; border: 2px solid #e2e8f0;
             border-radius: 8px; font-size: 14px;
         }
-        .chat-controls input:focus { outline: none; border-color: #4299e1; }
+        .chat-controls input:focus { outline: none; border-color: #065A82; }
         .send-btn {
-            padding: 9px 20px; background: #2b6cb0; color: white;
-            border: none; border-radius: 8px; cursor: pointer;
-            font-size: 14px; font-weight: 600;
+            padding: 9px 20px;
+            background: linear-gradient(135deg, #1B3A6B, #065A82);
+            color: white; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 14px; font-weight: 600;
         }
-        .send-btn:hover { background: #2c5282; }
+        .send-btn:hover { opacity: 0.9; }
+
+        .footer {
+            text-align: center; padding: 20px;
+            color: #718096; font-size: 12px;
+            border-top: 1px solid #e2e8f0; margin-top: 20px;
+        }
+        .footer span { color: #02C39A; font-weight: 700; }
     </style>
 </head>
 <body>
+
+    <!-- Navbar -->
     <nav>
-        <h1>🏥 Hospital Readmission Predictor</h1>
+        <div class="nav-brand">
+            <h1>⬡ KORE</h1>
+            <span>CLINICAL OUTCOME RISK EVALUATOR</span>
+        </div>
         <div class="nav-links">
             <a href="/insights">📈 AI Insights</a>
             <a href="/history">📋 History</a>
         </div>
     </nav>
 
+    <!-- Hero -->
+    <div class="hero">
+        <p>🏥 AI-Powered Hospital Readmission Prediction · Powered by Random Forest & Llama 3.3 70B</p>
+    </div>
+
+    <!-- Main Content -->
     <div class="main">
-        <!-- Form -->
+
+        <!-- Form Card -->
         <div class="card form-card">
-            <h2>Patient Details</h2>
-            <p>Fill in patient information to predict 30-day readmission risk</p>
+            <div class="kore-tag">KORE PREDICTION ENGINE</div>
+            <h2>Patient Risk Assessment</h2>
+            <p>Enter patient details to evaluate 30-day readmission risk</p>
             <form action="/predict" method="POST">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Age Group (1-9)</label>
+                        <label>Age Group (1–9)</label>
                         <input type="number" name="age" min="1" max="9" required placeholder="e.g. 7">
                     </div>
                     <div class="form-group">
@@ -166,38 +215,42 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit">🔍 Predict Readmission Risk</button>
+                <button type="submit">⬡ KORE — Evaluate Risk</button>
             </form>
         </div>
 
         <!-- Results -->
         {% if prediction %}
         <div class="result-col">
+
             <!-- Risk Result -->
             <div class="card risk-box">
+                <div class="kore-label">KORE RISK ASSESSMENT</div>
                 <h2 style="color: {{ color }}">{{ prediction }}</h2>
                 <p>Readmission Probability: <strong>{{ probability }}%</strong></p>
             </div>
 
-            <!-- Charts -->
+            <!-- Risk Gauge -->
             <div class="card">
-                <h3 style="font-size:14px;font-weight:700;color:#2d3748;margin-bottom:10px;">📊 Risk Gauge</h3>
+                <h3 style="font-size:13px;font-weight:700;color:#2d3748;margin-bottom:10px;">📊 Risk Probability Gauge</h3>
                 <canvas id="gaugeChart" height="140"></canvas>
             </div>
+
+            <!-- Feature Chart -->
             <div class="card">
-                <h3 style="font-size:14px;font-weight:700;color:#2d3748;margin-bottom:10px;">🔑 Top Risk Factors</h3>
+                <h3 style="font-size:13px;font-weight:700;color:#2d3748;margin-bottom:10px;">🔑 Top Risk Factors</h3>
                 <canvas id="featureChart" height="180"></canvas>
             </div>
 
-            <!-- AI Report -->
+            <!-- AI Doctor Report -->
             <div class="card ai-section">
-                <h3>🩺 AI Doctor Report</h3>
+                <h3>🩺 KORE AI Doctor Report</h3>
                 <div class="ai-report-box">{{ ai_report }}</div>
             </div>
 
             <!-- AI Recommendations -->
             <div class="card ai-section">
-                <h3>✅ AI Recommendations</h3>
+                <h3>✅ KORE AI Recommendations</h3>
                 <div class="ai-rec-box">{{ ai_recommendations }}</div>
             </div>
         </div>
@@ -206,8 +259,11 @@
             new Chart(document.getElementById('gaugeChart'), {
                 type: 'doughnut',
                 data: {
-                    datasets: [{ data: [{{ probability }}, {{ 100 - probability }}],
-                    backgroundColor: ['{{ color }}', '#e2e8f0'], borderWidth: 0 }]
+                    datasets: [{
+                        data: [{{ probability }}, {{ 100 - probability }}],
+                        backgroundColor: ['{{ color }}', '#e2e8f0'],
+                        borderWidth: 0
+                    }]
                 },
                 options: {
                     circumference: 180, rotation: -90, cutout: '75%',
@@ -218,41 +274,59 @@
                 type: 'bar',
                 data: {
                     labels: {{ chart_labels | tojson }},
-                    datasets: [{ label: 'Importance %', data: {{ chart_values | tojson }},
-                    backgroundColor: '#4299e1', borderRadius: 6 }]
+                    datasets: [{
+                        label: 'Importance %',
+                        data: {{ chart_values | tojson }},
+                        backgroundColor: '#065A82',
+                        borderRadius: 6
+                    }]
                 },
                 options: {
                     indexAxis: 'y',
                     plugins: { legend: { display: false } },
-                    scales: { x: { grid: { display: false } }, y: { grid: { display: false } } }
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { display: false } }
+                    }
                 }
             });
         </script>
         {% endif %}
     </div>
 
-    <!-- AI Chatbot -->
+    <!-- KORE AI Chatbot -->
     <div class="main" style="padding-top: 0;">
         <div class="card chatbot-card">
-            <h3>💬 AI Medical Chatbot <span style="font-size:12px;color:#718096;font-weight:400;">(Multilingual — ask in any language)</span></h3>
+            <div class="chat-header">
+                <h3>💬 KORE AI Assistant <span style="background:#ebf8ff;color:#065A82;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:6px;">MULTILINGUAL</span></h3>
+                <span>Ask in any language — English, Hindi, Urdu, Arabic & more</span>
+            </div>
             <div class="chat-window" id="chatWindow">
-                <div class="chat-msg bot">👋 Hello! I'm your AI medical assistant. Ask me anything about hospital readmission risk in any language!</div>
+                <div class="chat-msg bot">👋 Hello! I'm <strong>KORE AI Assistant</strong>. Ask me anything about hospital readmission risk in any language — Hindi, English, Urdu, Arabic, and more!</div>
             </div>
             <div class="chat-controls">
                 <select id="langSelect">
                     <option value="English">🇬🇧 English</option>
+                    <option value="Hindi">🇮🇳 Hindi</option>
                     <option value="Urdu">🇵🇰 Urdu</option>
                     <option value="Arabic">🇸🇦 Arabic</option>
                     <option value="French">🇫🇷 French</option>
                     <option value="Spanish">🇪🇸 Spanish</option>
-                    <option value="Hindi">🇮🇳 Hindi</option>
                     <option value="Chinese">🇨🇳 Chinese</option>
                 </select>
-                <input type="text" id="chatInput" placeholder="Ask a question in any language..." 
-                       onkeypress="if(event.key==='Enter') sendChat()">
+                <input type="text" id="chatInput"
+                    placeholder="Ask KORE anything..."
+                    onkeypress="if(event.key==='Enter') sendChat()">
                 <button class="send-btn" onclick="sendChat()">Send ➤</button>
             </div>
         </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <span>⬡ KORE</span> — Clinical Outcome Risk Evaluator &nbsp;·&nbsp;
+        Powered by Random Forest ML &amp; Llama 3.3 70B &nbsp;·&nbsp;
+        Built with Python, Flask &amp; Groq AI
     </div>
 
     <script>
@@ -261,15 +335,11 @@
             const lang = document.getElementById('langSelect').value;
             const msg = input.value.trim();
             if (!msg) return;
-
             const chatWindow = document.getElementById('chatWindow');
-
-            // Add user message
             chatWindow.innerHTML += `<div class="chat-msg user">${msg}</div>`;
-            chatWindow.innerHTML += `<div class="chat-msg loading" id="loading">⏳ Thinking...</div>`;
+            chatWindow.innerHTML += `<div class="chat-msg loading" id="loading">⏳ KORE is thinking...</div>`;
             chatWindow.scrollTop = chatWindow.scrollHeight;
             input.value = '';
-
             try {
                 const response = await fetch('/chat', {
                     method: 'POST',
@@ -286,7 +356,7 @@
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             } catch (err) {
                 document.getElementById('loading').remove();
-                chatWindow.innerHTML += `<div class="chat-msg bot">Sorry, something went wrong. Please try again.</div>`;
+                chatWindow.innerHTML += `<div class="chat-msg bot">Sorry, KORE encountered an error. Please try again.</div>`;
             }
         }
     </script>

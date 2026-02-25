@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'kore-clinical-outcome-risk-evaluator'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///predictions.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -205,7 +206,7 @@ def chat():
     language = data.get('language', 'English')
     patient_context = data.get('patient_context', '')
 
-    prompt = f"""You are a multilingual medical AI assistant for a hospital readmission prediction system.
+    prompt = f"""You are KORE AI Assistant — a multilingual medical AI assistant for KORE (Clinical Outcome Risk Evaluator), a hospital readmission prediction system.
 
 {f'Current Patient Context: {patient_context}' if patient_context else ''}
 

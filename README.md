@@ -1,60 +1,133 @@
-# 🏥 Hospital Readmission Prediction
+# ⬡ KORE — Clinical Outcome Risk Evaluator
 
-## Project Overview
-This project predicts whether a diabetic patient will be readmitted to the hospital within 30 days of discharge using machine learning. Early identification of high-risk patients can help hospitals take preventive measures and reduce unnecessary readmissions.
+> AI-Powered Hospital Readmission Prediction System
 
-## Problem Statement
-Hospital readmissions cost the US healthcare system over $26 billion annually. Many readmissions are preventable with better care planning. This project builds a data-driven solution to identify high-risk patients before discharge.
+[![Live Demo](https://img.shields.io/badge/Live-Demo-02C39A?style=for-the-badge)](https://hospital-readmission-prediction-kpnl.onrender.com)
+[![Python](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-3.1-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com)
+[![Groq AI](https://img.shields.io/badge/Groq-Llama_3.3_70B-orange?style=for-the-badge)](https://groq.com)
 
-## Dataset
-- **Source:** Diabetes 130-US Hospitals Dataset (UCI/Kaggle)
-- **Size:** 101,766 patient records, 50 features
-- **Period:** 10 years of clinical care data from 130 US hospitals
+## 🌐 Live Demo
+**[https://hospital-readmission-prediction-kpnl.onrender.com](https://hospital-readmission-prediction-kpnl.onrender.com)**
 
-## Tools & Technologies
-- **Python** — Data cleaning, analysis, and machine learning
-- **SQL** — Data exploration
-- **Power BI** — Interactive dashboard
-- **Libraries:** Pandas, NumPy, Scikit-learn, XGBoost, Matplotlib, Seaborn
+---
 
-## Project Structure
-```
-hospital_readmission/
-├── data/                  ← Original dataset
-├── notebooks/
-│   ├── 01_exploration.ipynb   ← Data exploration
-│   ├── 02_cleaning.ipynb      ← Data cleaning
-│   ├── 03_modeling.py         ← ML model
-│   └── 04_export.py           ← Power BI export
-├── outputs/
-│   ├── cleaned_data.csv
-│   ├── powerbi_data.csv
-│   ├── rf_model.pkl
-│   └── feature_importance.png
-```
+## 🏥 What is KORE?
 
-## Key Findings
-- Only 11% of patients were readmitted within 30 days (class imbalance handled with SMOTE)
-- Top predictors: medication change, primary diagnosis, number of lab procedures
-- Older patients and those with more medications are at higher risk
+KORE predicts whether a diabetic patient will be readmitted to hospital within 30 days of discharge — with **91% accuracy** and **0.957 ROC-AUC score**.
 
-## Model Performance
+Hospital readmissions cost the US healthcare system **$26 billion annually**. KORE helps hospitals identify high-risk patients BEFORE discharge so they can take preventive action.
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🤖 ML Prediction | Random Forest model, 91% accuracy, 0.957 ROC-AUC |
+| 🩺 AI Doctor Report | Auto-generated medical summary using Llama 3.3 70B |
+| ✅ AI Recommendations | 4 prioritized action items for hospital staff |
+| 💬 Multilingual Chatbot | Supports English, Hindi, Urdu, Arabic, French, Spanish, Chinese |
+| 📈 AI Insights | Auto-analyzes trends from prediction history |
+| 📋 Prediction History | SQLite database stores all predictions |
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|----------|-----------|
+| Language | Python 3.13 |
+| ML Model | Scikit-learn Random Forest |
+| Class Balancing | SMOTE (imbalanced-learn) |
+| Web Framework | Flask + Flask-SQLAlchemy |
+| AI Layer | Groq API — Llama 3.3 70B |
+| Database | SQLite |
+| Frontend | HTML, CSS, JavaScript, Chart.js |
+| Dashboard | Power BI |
+| Deployment | Render.com + Gunicorn |
+| Version Control | GitHub |
+
+---
+
+## 📊 Model Performance
+
 | Metric | Score |
 |--------|-------|
 | Accuracy | 91% |
 | Precision | 94% |
 | Recall | 87% |
+| F1-Score | 91% |
 | ROC-AUC | 0.957 |
 
-## Dashboard
-Interactive Power BI dashboard showing:
-- Total patients and readmission KPIs
-- Readmissions by age group
-- Predicted risk by number of medications
-- Readmission breakdown (predicted vs actual)
+---
 
-## How to Run
-1. Clone the repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run notebooks in order (01 → 02 → 03 → 04)
-4. Open Power BI dashboard from outputs folder
+## 🗂️ Project Structure
+```
+hospital_readmission/
+├── notebooks/
+│   ├── 01_exploration.ipynb    # Data exploration
+│   ├── 02_cleaning.ipynb       # Data preprocessing
+│   └── 03_modeling.py          # ML model training
+├── outputs/
+│   ├── rf_model.pkl            # Trained model
+│   ├── cleaned_data.csv        # Processed dataset
+│   └── feature_importance.png  # Feature analysis
+├── webapp/
+│   ├── app.py                  # Flask application
+│   ├── templates/
+│   │   ├── index.html          # Main prediction page
+│   │   ├── history.html        # Prediction history
+│   │   └── insights.html       # AI insights dashboard
+│   ├── requirements.txt
+│   └── Procfile
+└── README.md
+```
+
+---
+
+## 🚀 Run Locally
+```bash
+# Clone the repository
+git clone https://github.com/Faizan1310/hospital-readmission-prediction.git
+cd hospital-readmission-prediction
+
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate  # Windows
+source venv/bin/activate  # Mac/Linux
+
+# Install dependencies
+pip install -r webapp/requirements.txt
+
+# Add your Groq API key
+echo "GROQ_API_KEY=your_key_here" > webapp/.env
+
+# Run the app
+cd webapp
+python app.py
+```
+
+---
+
+## 📈 Dataset
+
+- **Source:** Diabetes 130-US Hospitals Dataset (UCI / Kaggle)
+- **Records:** 101,766 patient encounters
+- **Features:** 50 clinical attributes
+- **Period:** 10 years (1999-2008)
+- **Hospitals:** 130 US hospitals
+
+---
+
+## 👨‍💻 Developer
+
+**Faizan Khan**
+- GitHub: [@Faizan1310](https://github.com/Faizan1310)
+- Project: KORE — Clinical Outcome Risk Evaluator
+
+---
+
+## 📄 License
+
+This project is open source and available under the MIT License.
