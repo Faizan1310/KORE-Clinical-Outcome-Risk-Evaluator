@@ -2,13 +2,13 @@
 
 > AI-Powered Hospital Readmission Prediction System
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-02C39A?style=for-the-badge)](https://kore-ai.onrender.com)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-02C39A?style=for-the-badge)](https://kore-ai-fnf8.onrender.com)
 [![Python](https://img.shields.io/badge/Python-3.13-blue?style=for-the-badge&logo=python)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-3.1-black?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com)
 [![Groq AI](https://img.shields.io/badge/Groq-Llama_3.3_70B-orange?style=for-the-badge)](https://groq.com)
 
 ## 🌐 Live Demo
-**[https://kore-ai.onrender.com](https://kore-ai.onrender.com)**
+**[https://kore-ai-fnf8.onrender.com](https://kore-ai-fnf8.onrender.com)**
 
 ---
 
