@@ -93,7 +93,7 @@
         <div class="nav-links">
             <a href="/">🔍 New Assessment</a>
             <a href="/insights">📈 AI Insights</a>
-            <a href="/clear_history" class="danger">🗑️ Clear History</a>
+            <a href="#" class="danger" onclick="confirmClear()">🗑️ Clear History</a>
         </div>
     </nav>
 
@@ -165,6 +165,15 @@
         <span>⬡ KORE</span> — Clinical Outcome Risk Evaluator &nbsp;·&nbsp;
         Powered by Random Forest ML &amp; Llama 3.3 70B
     </div>
-
+    <script>
+function confirmClear() {
+    const password = prompt("Enter admin password to clear history:");
+    if (password === "kore2026") {
+        window.location.href = "/clear_history";
+    } else if (password !== null) {
+        alert("❌ Incorrect password! Access denied.");
+    }
+}
+</script>
 </body>
 </html>
