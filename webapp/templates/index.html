@@ -268,12 +268,22 @@
                 <form action="/predict" method="POST" id="predictForm">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label>Age Group</label>
-                            <div class="input-wrap">
-                                <span class="input-icon">👤</span>
-                                <input type="number" name="age" min="1" max="9" required placeholder="1–9">
-                            </div>
-                        </div>
+    <label>Age Group</label>
+    <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <select name="age">
+            <option value="1">0–10 years</option>
+            <option value="2">10–20 years</option>
+            <option value="3">20–30 years</option>
+            <option value="4">30–40 years</option>
+            <option value="5">40–50 years</option>
+            <option value="6">50–60 years</option>
+            <option value="7">60–70 years</option>
+            <option value="8">70–80 years</option>
+            <option value="9">80–90 years</option>
+        </select>
+    </div>
+</div>
                         <div class="form-group">
                             <label>Gender</label>
                             <div class="input-wrap">
