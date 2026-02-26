@@ -122,7 +122,7 @@ python app.py
 
 ## 👨‍💻 Developer
 
-**Faizan Khan**
+**Md Faizan Khan**
 - GitHub: [@Faizan1310](https://github.com/Faizan1310)
 - Project: KORE — Clinical Outcome Risk Evaluator
 
