@@ -1,311 +1,411 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KORE — Clinical Outcome Risk Evaluator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --bg: #050d1a; --bg2: #0a1628; --surface: #0f1f35; --surface2: #162440;
+            --border: rgba(2,195,154,0.15); --teal: #02C39A; --teal2: #00a896;
+            --blue: #065A82; --navy: #1B3A6B; --text: #e8f4f8;
+            --text2: #8ab4c8; --text3: #4a7a94; --red: #ff4d6d; --green: #02C39A;
+            --card-bg: rgba(15,31,53,0.9);
+        }
+        [data-theme="light"] {
+            --bg: #f0f6ff; --bg2: #e4eef9; --surface: #ffffff; --surface2: #f0f6ff;
+            --border: rgba(6,90,130,0.15); --text: #0a1628; --text2: #2d5f7a;
+            --text3: #4a7a94; --card-bg: rgba(255,255,255,0.95);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; min-height: 100vh; }
 
+        .bg-grid {
+            position: fixed; inset: 0; z-index: 0;
+            background-image: linear-gradient(rgba(2,195,154,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(2,195,154,0.03) 1px, transparent 1px);
+            background-size: 50px 50px; pointer-events: none;
+        }
+
+        /* ── LOADING OVERLAY ── */
+        #loadingOverlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: var(--bg);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        #loadingOverlay.hidden { opacity: 0; visibility: hidden; }
+        .loader-logo { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--teal); letter-spacing: 4px; margin-bottom: 32px; animation: pulse 1.5s ease-in-out infinite; }
+        .loader-bar { width: 200px; height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+        .loader-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--blue)); border-radius: 2px; animation: load 1.5s ease forwards; }
+        .loader-text { font-size: 12px; color: var(--text3); margin-top: 16px; letter-spacing: 2px; }
+        @keyframes load { from{width:0} to{width:100%} }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+        /* ── NAVBAR ── */
         nav {
-            background: linear-gradient(135deg, #1B3A6B, #065A82);
-            padding: 16px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: sticky; top: 0; z-index: 100;
+            padding: 14px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5,13,26,0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
         }
-        .nav-brand { display: flex; flex-direction: column; }
-        .nav-brand h1 { color: #02C39A; font-size: 22px; font-weight: 800; letter-spacing: 2px; }
-        .nav-brand span { color: #CADCFC; font-size: 11px; letter-spacing: 1px; }
-        .nav-links { display: flex; gap: 10px; }
-        nav a {
-            color: white; text-decoration: none; font-size: 13px;
-            background: rgba(255,255,255,0.15);
-            padding: 8px 16px; border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.2s;
+        [data-theme="light"] nav { background: rgba(240,246,255,0.9); }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--teal), var(--blue)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; font-family: 'Syne', sans-serif; box-shadow: 0 0 16px rgba(2,195,154,0.25); }
+        .logo-text h1 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--teal); letter-spacing: 2px; }
+        .logo-text span { font-size: 9px; color: var(--text3); letter-spacing: 1px; }
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .nav-link { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; padding: 7px 14px; border-radius: 7px; transition: all 0.2s; }
+        .nav-link:hover { color: var(--teal); background: rgba(2,195,154,0.08); }
+        .theme-btn { width: 34px; height: 34px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all 0.2s; }
+        .theme-btn:hover { border-color: var(--teal); }
+
+        /* ── HERO BAR ── */
+        .hero-bar {
+            background: linear-gradient(135deg, rgba(27,58,107,0.4), rgba(6,90,130,0.2));
+            border-bottom: 1px solid var(--border);
+            padding: 20px 40px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: relative; z-index: 1;
+            animation: slideDown 0.5s ease;
         }
-        nav a:hover { background: rgba(255,255,255,0.25); }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+        .hero-bar-left h2 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--text); }
+        .hero-bar-left p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+        .hero-badges { display: flex; gap: 8px; }
+        .hbadge { display: flex; align-items: center; gap: 6px; background: rgba(2,195,154,0.1); border: 1px solid rgba(2,195,154,0.2); padding: 5px 12px; border-radius: 100px; font-size: 11px; color: var(--teal); font-weight: 500; }
 
-        .hero {
-            background: linear-gradient(135deg, #1B3A6B, #065A82);
-            padding: 30px 40px;
-            text-align: center;
-            color: white;
-            border-bottom: 3px solid #02C39A;
-        }
-        .hero p { color: #CADCFC; font-size: 14px; margin-top: 6px; }
+        /* ── MAIN LAYOUT ── */
+        .main { display: flex; gap: 24px; padding: 28px 40px; position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; }
+        .left-col { width: 420px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }
+        .right-col { flex: 1; display: flex; flex-direction: column; gap: 20px; }
 
-        .main { display: flex; justify-content: center; padding: 30px 20px; gap: 24px; flex-wrap: wrap; }
-
+        /* ── CARDS ── */
         .card {
-            background: white; border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            padding: 28px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.2s;
+            animation: fadeUp 0.5s ease both;
         }
+        .card:hover { border-color: rgba(2,195,154,0.25); }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        .card:nth-child(1){animation-delay:0.05s}
+        .card:nth-child(2){animation-delay:0.1s}
+        .card:nth-child(3){animation-delay:0.15s}
+        .card-label { font-size: 10px; color: var(--teal); letter-spacing: 2px; font-weight: 600; margin-bottom: 12px; }
+        .card h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 
-        .form-card { width: 100%; max-width: 480px; }
-        .form-card h2 { color: #2d3748; margin-bottom: 4px; font-size: 18px; }
-        .form-card p { color: #718096; font-size: 13px; margin-bottom: 20px; }
-        .kore-tag {
-            display: inline-block;
-            background: #ebf8ff; color: #065A82;
-            font-size: 11px; font-weight: 700;
-            padding: 3px 10px; border-radius: 20px;
-            margin-bottom: 8px; letter-spacing: 1px;
-        }
-
+        /* ── FORM ── */
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .form-group { display: flex; flex-direction: column; }
-        label { font-size: 12px; font-weight: 600; color: #4a5568; margin-bottom: 5px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; }
+        .input-wrap { position: relative; }
+        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
         input, select {
-            padding: 9px 12px; border: 2px solid #e2e8f0;
-            border-radius: 8px; font-size: 14px; color: #2d3748; transition: border 0.2s;
+            width: 100%; padding: 10px 12px 10px 34px;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; font-size: 14px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; transition: all 0.2s;
         }
-        input:focus, select:focus { outline: none; border-color: #065A82; }
-        button[type="submit"] {
-            width: 100%; padding: 13px;
-            background: linear-gradient(135deg, #1B3A6B, #065A82);
-            color: white; border: none; border-radius: 8px;
-            font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px;
-            letter-spacing: 1px; transition: opacity 0.2s;
-        }
-        button[type="submit"]:hover { opacity: 0.9; }
+        [data-theme="light"] input, [data-theme="light"] select { background: var(--bg2); }
+        input:focus, select:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(2,195,154,0.1); }
+        select option { background: var(--surface); }
 
-        .result-col { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 18px; }
-
-        .risk-box {
-            text-align: center; padding: 24px; border-radius: 12px;
-            background: #f7fafc; border: 2px solid #e2e8f0;
+        .submit-btn {
+            width: 100%; padding: 13px; margin-top: 4px;
+            background: linear-gradient(135deg, var(--teal), var(--teal2));
+            color: #050d1a; border: none; border-radius: 10px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            font-family: 'Syne', sans-serif; letter-spacing: 1px;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .risk-box .kore-label { font-size: 11px; color: #718096; letter-spacing: 2px; margin-bottom: 8px; }
-        .risk-box h2 { font-size: 32px; font-weight: 800; margin-bottom: 6px; }
-        .risk-box p { color: #4a5568; font-size: 15px; }
+        .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(2,195,154,0.3); }
+        .submit-btn:active { transform: translateY(0); }
 
-        .ai-section h3 {
-            font-size: 14px; font-weight: 700; color: #2d3748;
-            margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+        /* ── SUBMITTING STATE ── */
+        .submitting-overlay {
+            display: none; position: fixed; inset: 0; z-index: 500;
+            background: rgba(5,13,26,0.7); backdrop-filter: blur(8px);
+            align-items: center; justify-content: center; flex-direction: column; gap: 20px;
         }
+        .submitting-overlay.show { display: flex; }
+        .spinner { width: 60px; height: 60px; border: 3px solid var(--surface2); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+        .submitting-text { font-family: 'Syne', sans-serif; font-size: 18px; color: var(--text); font-weight: 700; }
+        .submitting-sub { font-size: 13px; color: var(--text3); }
+
+        /* ── RESULT ── */
+        .result-reveal { animation: resultReveal 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+        @keyframes resultReveal { from{opacity:0;transform:scale(0.9) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+        .risk-display { text-align: center; padding: 28px; }
+        .risk-label { font-size: 10px; color: var(--text3); letter-spacing: 2px; margin-bottom: 12px; }
+        .risk-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 12px 28px; border-radius: 100px;
+            font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800;
+            margin-bottom: 12px;
+            animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+        }
+        @keyframes badgePop { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+        .risk-badge.high { background: rgba(255,77,109,0.15); color: #ff4d6d; border: 2px solid rgba(255,77,109,0.3); }
+        .risk-badge.low { background: rgba(2,195,154,0.15); color: var(--teal); border: 2px solid rgba(2,195,154,0.3); }
+        .risk-prob { font-size: 15px; color: var(--text2); }
+        .risk-prob strong { color: var(--text); font-size: 18px; }
+
+        /* ── AI BOXES ── */
         .ai-report-box {
-            background: #ebf8ff; border-left: 4px solid #065A82;
-            padding: 14px; border-radius: 8px;
-            font-size: 13px; color: #2d3748; line-height: 1.7;
+            background: rgba(6,90,130,0.1); border: 1px solid rgba(6,90,130,0.3);
+            border-left: 3px solid var(--blue);
+            padding: 16px; border-radius: 10px;
+            font-size: 13px; color: var(--text2); line-height: 1.8;
         }
         .ai-rec-box {
-            background: #f0fff4; border-left: 4px solid #38a169;
-            padding: 14px; border-radius: 8px;
-            font-size: 13px; color: #2d3748; line-height: 1.8;
+            background: rgba(2,195,154,0.05); border: 1px solid rgba(2,195,154,0.2);
+            border-left: 3px solid var(--teal);
+            padding: 16px; border-radius: 10px;
+            font-size: 13px; color: var(--text2); line-height: 2.0;
             white-space: pre-line;
         }
 
-        /* Chatbot */
-        .chatbot-card { width: 100%; max-width: 990px; }
-        .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-        .chat-header h3 { font-size: 15px; font-weight: 700; color: #2d3748; }
-        .chat-header span { font-size: 11px; color: #718096; }
-
+        /* ── CHATBOT ── */
+        .chat-section { padding: 0 40px 28px; position: relative; z-index: 1; max-width: 1300px; margin: 0 auto; }
+        .chat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); animation: fadeUp 0.5s ease 0.3s both; }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .chat-header-left { display: flex; align-items: center; gap: 10px; }
+        .chat-header-left h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+        .chat-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--teal); }
+        .status-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: pulse 2s infinite; }
         .chat-window {
-            height: 270px; overflow-y: auto;
-            border: 2px solid #e2e8f0; border-radius: 10px;
-            padding: 14px; background: #f7fafc; margin-bottom: 12px;
+            height: 240px; overflow-y: auto; background: var(--surface2);
+            border: 1px solid var(--border); border-radius: 10px;
+            padding: 16px; margin-bottom: 12px;
             display: flex; flex-direction: column; gap: 10px;
+            scrollbar-width: thin; scrollbar-color: var(--border) transparent;
         }
-        .chat-msg { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
-        .chat-msg.user { background: linear-gradient(135deg, #1B3A6B, #065A82); color: white; align-self: flex-end; border-bottom-right-radius: 3px; }
-        .chat-msg.bot { background: white; color: #2d3748; align-self: flex-start; border: 1px solid #e2e8f0; border-bottom-left-radius: 3px; }
-        .chat-msg.loading { color: #718096; font-style: italic; background: white; border: 1px solid #e2e8f0; align-self: flex-start; }
-
+        .chat-msg { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.6; animation: msgPop 0.3s ease; }
+        @keyframes msgPop { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .chat-msg.user { background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; align-self: flex-end; border-bottom-right-radius: 3px; }
+        .chat-msg.bot { background: var(--surface); color: var(--text); align-self: flex-start; border: 1px solid var(--border); border-bottom-left-radius: 3px; }
+        .chat-msg.loading { color: var(--text3); font-style: italic; background: var(--surface); border: 1px solid var(--border); align-self: flex-start; }
         .chat-controls { display: flex; gap: 10px; align-items: center; }
-        .chat-controls select {
-            padding: 9px 12px; border: 2px solid #e2e8f0;
-            border-radius: 8px; font-size: 13px; width: 145px;
-        }
-        .chat-controls input {
-            flex: 1; padding: 9px 14px; border: 2px solid #e2e8f0;
-            border-radius: 8px; font-size: 14px;
-        }
-        .chat-controls input:focus { outline: none; border-color: #065A82; }
-        .send-btn {
-            padding: 9px 20px;
-            background: linear-gradient(135deg, #1B3A6B, #065A82);
-            color: white; border: none; border-radius: 8px;
-            cursor: pointer; font-size: 14px; font-weight: 600;
-        }
-        .send-btn:hover { opacity: 0.9; }
+        .lang-select { padding: 10px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text); font-family: 'DM Sans', sans-serif; width: 150px; }
+        .chat-input { flex: 1; padding: 10px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; }
+        .chat-input:focus, .lang-select:focus { outline: none; border-color: var(--teal); }
+        .send-btn { padding: 10px 20px; background: var(--teal); color: #050d1a; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 700; font-family: 'Syne', sans-serif; transition: all 0.2s; }
+        .send-btn:hover { background: var(--teal2); }
 
-        .footer {
-            text-align: center; padding: 20px;
-            color: #718096; font-size: 12px;
-            border-top: 1px solid #e2e8f0; margin-top: 20px;
+        /* ── FOOTER ── */
+        footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text3); margin-top: 12px; }
+        footer span { color: var(--teal); font-weight: 700; }
+
+        @media (max-width: 900px) {
+            .main { flex-direction: column; padding: 20px; }
+            .left-col { width: 100%; }
+            .hero-bar { flex-direction: column; gap: 12px; padding: 16px 20px; }
+            .chat-section { padding: 0 20px 20px; }
+            footer { flex-direction: column; gap: 8px; padding: 20px; }
         }
-        .footer span { color: #02C39A; font-weight: 700; }
     </style>
 </head>
 <body>
+    <div class="bg-grid"></div>
 
-    <!-- Navbar -->
+    <!-- LOADING OVERLAY -->
+    <div id="loadingOverlay">
+        <div class="loader-logo">⬡ KORE</div>
+        <div class="loader-bar"><div class="loader-fill"></div></div>
+        <div class="loader-text">INITIALIZING CLINICAL AI...</div>
+    </div>
+
+    <!-- SUBMITTING OVERLAY -->
+    <div class="submitting-overlay" id="submittingOverlay">
+        <div class="spinner"></div>
+        <div class="submitting-text">⬡ KORE is analyzing...</div>
+        <div class="submitting-sub">Running ML model + generating AI report</div>
+    </div>
+
+    <!-- NAVBAR -->
     <nav>
-        <div class="nav-brand">
-            <h1>⬡ KORE</h1>
-            <span>CLINICAL OUTCOME RISK EVALUATOR</span>
-        </div>
-        <div class="nav-links">
-            <a href="/insights">📈 AI Insights</a>
-            <a href="/history">📋 History</a>
+        <a href="/" class="nav-logo">
+            <div class="logo-icon">K</div>
+            <div class="logo-text"><h1>KORE</h1><span>CLINICAL OUTCOME RISK EVALUATOR</span></div>
+        </a>
+        <div class="nav-right">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/about" class="nav-link">About</a>
+            <a href="/insights" class="nav-link">📈 Insights</a>
+            <a href="/history" class="nav-link">📋 History</a>
+            <div class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</div>
         </div>
     </nav>
 
-    <!-- Hero -->
-    <div class="hero">
-        <p>🏥 AI-Powered Hospital Readmission Prediction · Powered by Random Forest & Llama 3.3 70B</p>
+    <!-- HERO BAR -->
+    <div class="hero-bar">
+        <div class="hero-bar-left">
+            <h2>Patient Risk Assessment</h2>
+            <p>Enter patient details to evaluate 30-day readmission risk with AI</p>
+        </div>
+        <div class="hero-badges">
+            <div class="hbadge">🤖 Random Forest ML</div>
+            <div class="hbadge">🧠 Llama 3.3 70B</div>
+            <div class="hbadge">✅ 91% Accuracy</div>
+        </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- MAIN -->
     <div class="main">
-
-        <!-- Form Card -->
-        <div class="card form-card">
-            <div class="kore-tag">KORE PREDICTION ENGINE</div>
-            <h2>Patient Risk Assessment</h2>
-            <p>Enter patient details to evaluate 30-day readmission risk</p>
-            <form action="/predict" method="POST">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Age Group (1–9)</label>
-                        <input type="number" name="age" min="1" max="9" required placeholder="e.g. 7">
+        <!-- LEFT: FORM -->
+        <div class="left-col">
+            <div class="card">
+                <div class="card-label">⬡ KORE PREDICTION ENGINE</div>
+                <h3>🏥 Patient Details</h3>
+                <form action="/predict" method="POST" id="predictForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Age Group</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">👤</span>
+                                <input type="number" name="age" min="1" max="9" required placeholder="1–9">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">⚥</span>
+                                <select name="gender">
+                                    <option value="1">Male</option>
+                                    <option value="0">Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Days in Hospital</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">🛏</span>
+                                <input type="number" name="time_in_hospital" min="1" max="14" required placeholder="1–14">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Medications</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">💊</span>
+                                <input type="number" name="num_medications" min="1" max="80" required placeholder="count">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Lab Procedures</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">🔬</span>
+                                <input type="number" name="num_lab_procedures" min="1" max="100" required placeholder="count">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Diagnoses</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">📋</span>
+                                <input type="number" name="number_diagnoses" min="1" max="16" required placeholder="count">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Insulin</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">💉</span>
+                                <select name="insulin">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Med Changed?</label>
+                            <div class="input-wrap">
+                                <span class="input-icon">🔄</span>
+                                <select name="change">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Gender</label>
-                        <select name="gender">
-                            <option value="1">Male</option>
-                            <option value="0">Female</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Time in Hospital (days)</label>
-                        <input type="number" name="time_in_hospital" min="1" max="14" required placeholder="e.g. 4">
-                    </div>
-                    <div class="form-group">
-                        <label>Num Medications</label>
-                        <input type="number" name="num_medications" min="1" max="80" required placeholder="e.g. 15">
-                    </div>
-                    <div class="form-group">
-                        <label>Num Lab Procedures</label>
-                        <input type="number" name="num_lab_procedures" min="1" max="100" required placeholder="e.g. 40">
-                    </div>
-                    <div class="form-group">
-                        <label>Number of Diagnoses</label>
-                        <input type="number" name="number_diagnoses" min="1" max="16" required placeholder="e.g. 5">
-                    </div>
-                    <div class="form-group">
-                        <label>Insulin Given?</label>
-                        <select name="insulin">
-                            <option value="0">No</option>
-                            <option value="1">Yes</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Medication Changed?</label>
-                        <select name="change">
-                            <option value="0">No</option>
-                            <option value="1">Yes</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit">⬡ KORE — Evaluate Risk</button>
-            </form>
-        </div>
-
-        <!-- Results -->
-        {% if prediction %}
-        <div class="result-col">
-
-            <!-- Risk Result -->
-            <div class="card risk-box">
-                <div class="kore-label">KORE RISK ASSESSMENT</div>
-                <h2 style="color: {{ color }}">{{ prediction }}</h2>
-                <p>Readmission Probability: <strong>{{ probability }}%</strong></p>
+                    <button type="submit" class="submit-btn" style="margin-top:16px">
+                        ⬡ Evaluate Risk with KORE
+                    </button>
+                </form>
             </div>
 
-            <!-- Risk Gauge -->
-            <div class="card">
-                <h3 style="font-size:13px;font-weight:700;color:#2d3748;margin-bottom:10px;">📊 Risk Probability Gauge</h3>
+            {% if prediction %}
+            <!-- CHARTS -->
+            <div class="card result-reveal">
+                <div class="card-label">RISK GAUGE</div>
                 <canvas id="gaugeChart" height="140"></canvas>
             </div>
+            <div class="card result-reveal">
+                <div class="card-label">TOP RISK FACTORS</div>
+                <canvas id="featureChart" height="200"></canvas>
+            </div>
+            {% endif %}
+        </div>
 
-            <!-- Feature Chart -->
-            <div class="card">
-                <h3 style="font-size:13px;font-weight:700;color:#2d3748;margin-bottom:10px;">🔑 Top Risk Factors</h3>
-                <canvas id="featureChart" height="180"></canvas>
+        <!-- RIGHT: RESULTS -->
+        <div class="right-col">
+            {% if prediction %}
+            <!-- RISK RESULT -->
+            <div class="card result-reveal">
+                <div class="risk-display">
+                    <div class="risk-label">⬡ KORE RISK ASSESSMENT</div>
+                    <div class="risk-badge {{ 'high' if prediction == 'HIGH RISK' else 'low' }}">
+                        {{ '⚠️' if prediction == 'HIGH RISK' else '✅' }} {{ prediction }}
+                    </div>
+                    <div class="risk-prob">
+                        30-day Readmission Probability: <strong>{{ probability }}%</strong>
+                    </div>
+                </div>
             </div>
 
-            <!-- AI Doctor Report -->
-            <div class="card ai-section">
+            <!-- AI REPORT -->
+            <div class="card result-reveal">
                 <h3>🩺 KORE AI Doctor Report</h3>
                 <div class="ai-report-box">{{ ai_report }}</div>
             </div>
 
-            <!-- AI Recommendations -->
-            <div class="card ai-section">
+            <!-- AI RECOMMENDATIONS -->
+            <div class="card result-reveal">
                 <h3>✅ KORE AI Recommendations</h3>
                 <div class="ai-rec-box">{{ ai_recommendations }}</div>
             </div>
-        </div>
 
-        <script>
-            new Chart(document.getElementById('gaugeChart'), {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: [{{ probability }}, {{ 100 - probability }}],
-                        backgroundColor: ['{{ color }}', '#e2e8f0'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    circumference: 180, rotation: -90, cutout: '75%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } }
-                }
-            });
-            new Chart(document.getElementById('featureChart'), {
-                type: 'bar',
-                data: {
-                    labels: {{ chart_labels | tojson }},
-                    datasets: [{
-                        label: 'Importance %',
-                        data: {{ chart_values | tojson }},
-                        backgroundColor: '#065A82',
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { grid: { display: false } }
-                    }
-                }
-            });
-        </script>
-        {% endif %}
+            {% else %}
+            <!-- EMPTY STATE -->
+            <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;text-align:center;gap:16px">
+                <div style="font-size:64px;opacity:0.3">⬡</div>
+                <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text2)">No assessment yet</div>
+                <div style="font-size:14px;color:var(--text3);max-width:300px;line-height:1.7">Fill in patient details on the left and click Evaluate Risk to get your AI-powered clinical assessment.</div>
+            </div>
+            {% endif %}
+        </div>
     </div>
 
-    <!-- KORE AI Chatbot -->
-    <div class="main" style="padding-top: 0;">
-        <div class="card chatbot-card">
+    <!-- CHATBOT -->
+    <div class="chat-section">
+        <div class="chat-card">
             <div class="chat-header">
-                <h3>💬 KORE AI Assistant <span style="background:#ebf8ff;color:#065A82;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:6px;">MULTILINGUAL</span></h3>
-                <span>Ask in any language — English, Hindi, Urdu, Arabic & more</span>
+                <div class="chat-header-left">
+                    <h3>💬 KORE AI Assistant</h3>
+                    <div class="chat-status"><span class="status-dot"></span> Online · Multilingual</div>
+                </div>
+                <div style="font-size:12px;color:var(--text3)">Ask in English, Hindi, Urdu, Arabic & more</div>
             </div>
             <div class="chat-window" id="chatWindow">
-                <div class="chat-msg bot">👋 Hello! I'm <strong>KORE AI Assistant</strong>. Ask me anything about hospital readmission risk in any language — Hindi, English, Urdu, Arabic, and more!</div>
+                <div class="chat-msg bot">👋 Hello! I'm <strong>KORE AI Assistant</strong>. Ask me anything about hospital readmission risk — in any language!</div>
             </div>
             <div class="chat-controls">
-                <select id="langSelect">
+                <select class="lang-select" id="langSelect">
                     <option value="English">🇬🇧 English</option>
                     <option value="Hindi">🇮🇳 Hindi</option>
                     <option value="Urdu">🇵🇰 Urdu</option>
@@ -314,7 +414,7 @@
                     <option value="Spanish">🇪🇸 Spanish</option>
                     <option value="Chinese">🇨🇳 Chinese</option>
                 </select>
-                <input type="text" id="chatInput"
+                <input type="text" class="chat-input" id="chatInput"
                     placeholder="Ask KORE anything..."
                     onkeypress="if(event.key==='Enter') sendChat()">
                 <button class="send-btn" onclick="sendChat()">Send ➤</button>
@@ -322,14 +422,77 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="footer">
-        <span>⬡ KORE</span> — Clinical Outcome Risk Evaluator &nbsp;·&nbsp;
-        Powered by Random Forest ML &amp; Llama 3.3 70B &nbsp;·&nbsp;
-        Built with Python, Flask &amp; Groq AI
-    </div>
+    <!-- FOOTER -->
+    <footer>
+        <div><span>⬡ KORE</span> — Clinical Outcome Risk Evaluator · Built by Faizan Khan · India</div>
+        <div>Powered by Random Forest ML &amp; Llama 3.3 70B · Deployed on Render.com</div>
+    </footer>
+
+    {% if prediction %}
+    <script>
+        new Chart(document.getElementById('gaugeChart'), {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [{{ probability }}, {{ 100 - probability }}],
+                    backgroundColor: ['{{ color }}', 'rgba(255,255,255,0.05)'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                circumference: 180, rotation: -90, cutout: '78%',
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                animation: { duration: 1200, easing: 'easeOutQuart' }
+            }
+        });
+        new Chart(document.getElementById('featureChart'), {
+            type: 'bar',
+            data: {
+                labels: {{ chart_labels | tojson }},
+                datasets: [{
+                    label: 'Importance',
+                    data: {{ chart_values | tojson }},
+                    backgroundColor: 'rgba(2,195,154,0.7)',
+                    borderRadius: 6, borderSkipped: false
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#4a7a94' } },
+                    y: { grid: { display: false }, ticks: { color: '#8ab4c8', font: { size: 12 } } }
+                },
+                animation: { duration: 1000, easing: 'easeOutQuart' }
+            }
+        });
+    </script>
+    {% endif %}
 
     <script>
+        // Loading overlay
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 1600);
+        });
+
+        // Form submit → show loading
+        document.getElementById('predictForm').addEventListener('submit', () => {
+            document.getElementById('submittingOverlay').classList.add('show');
+        });
+
+        // Theme
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.dataset.theme === 'dark') { html.dataset.theme = 'light'; btn.textContent = '🌙'; localStorage.setItem('kore_theme', 'light'); }
+            else { html.dataset.theme = 'dark'; btn.textContent = '☀️'; localStorage.setItem('kore_theme', 'dark'); }
+        }
+        const saved = localStorage.getItem('kore_theme');
+        if (saved) { document.documentElement.dataset.theme = saved; document.getElementById('themeBtn').textContent = saved === 'light' ? '🌙' : '☀️'; }
+
+        // Chatbot
         async function sendChat() {
             const input = document.getElementById('chatInput');
             const lang = document.getElementById('langSelect').value;
@@ -341,22 +504,18 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
             input.value = '';
             try {
-                const response = await fetch('/chat', {
+                const res = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: msg,
-                        language: lang,
-                        patient_context: '{{ prediction if prediction else "" }}'
-                    })
+                    body: JSON.stringify({ message: msg, language: lang, patient_context: '{{ prediction if prediction else "" }}' })
                 });
-                const data = await response.json();
+                const data = await res.json();
                 document.getElementById('loading').remove();
                 chatWindow.innerHTML += `<div class="chat-msg bot">${data.response}</div>`;
                 chatWindow.scrollTop = chatWindow.scrollHeight;
-            } catch (err) {
+            } catch {
                 document.getElementById('loading').remove();
-                chatWindow.innerHTML += `<div class="chat-msg bot">Sorry, KORE encountered an error. Please try again.</div>`;
+                chatWindow.innerHTML += `<div class="chat-msg bot">Sorry, an error occurred. Please try again.</div>`;
             }
         }
     </script>

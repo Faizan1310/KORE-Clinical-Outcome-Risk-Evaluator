@@ -87,8 +87,16 @@ Provide exactly 4 recommendations. Format each as:
     return message.choices[0].message.content
 
 @app.route('/')
+def landing():
+    return render_template('landing.html')
+
+@app.route('/app')
 def home():
     return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():

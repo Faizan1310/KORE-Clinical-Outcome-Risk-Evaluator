@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KORE — About</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050d1a; --bg2: #0a1628; --surface: #0f1f35; --surface2: #162440;
+            --border: rgba(2,195,154,0.15); --teal: #02C39A; --teal2: #00a896;
+            --blue: #065A82; --navy: #1B3A6B; --text: #e8f4f8;
+            --text2: #8ab4c8; --text3: #4a7a94; --card-bg: rgba(15,31,53,0.8);
+        }
+        [data-theme="light"] {
+            --bg: #f0f6ff; --bg2: #e4eef9; --surface: #ffffff; --surface2: #f0f6ff;
+            --border: rgba(6,90,130,0.15); --text: #0a1628; --text2: #2d5f7a;
+            --text3: #4a7a94; --card-bg: rgba(255,255,255,0.9);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); transition: all 0.3s; }
+        .bg-grid {
+            position: fixed; inset: 0; z-index: 0;
+            background-image: linear-gradient(rgba(2,195,154,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(2,195,154,0.03) 1px, transparent 1px);
+            background-size: 50px 50px; pointer-events: none;
+        }
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 16px 48px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5,13,26,0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); transition: all 0.3s;
+        }
+        [data-theme="light"] nav { background: rgba(240,246,255,0.85); }
+        .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--teal), var(--blue)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: white; font-family: 'Syne', sans-serif; box-shadow: 0 0 20px rgba(2,195,154,0.3); }
+        .logo-text h1 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--teal); letter-spacing: 2px; }
+        .logo-text span { font-size: 10px; color: var(--text3); letter-spacing: 1px; }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
+        .nav-link { color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 500; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; }
+        .nav-link:hover { color: var(--teal); }
+        .nav-cta { background: var(--teal); color: #050d1a; padding: 9px 22px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 700; }
+        .theme-toggle { width: 36px; height: 36px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 140px 48px 80px; position: relative; z-index: 1; }
+
+        .page-hero { text-align: center; margin-bottom: 80px; }
+        .page-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(2,195,154,0.1); border: 1px solid rgba(2,195,154,0.3); padding: 6px 16px; border-radius: 100px; font-size: 12px; color: var(--teal); font-weight: 500; margin-bottom: 24px; letter-spacing: 1px; }
+        .page-hero h1 { font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800; margin-bottom: 20px; }
+        .page-hero p { font-size: 18px; color: var(--text2); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+        .section { margin-bottom: 64px; }
+        .section h2 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .section h2 span { color: var(--teal); }
+        .section p { color: var(--text2); font-size: 15px; line-height: 1.8; margin-bottom: 16px; }
+
+        .highlight-box {
+            background: var(--surface); border: 1px solid var(--border);
+            border-left: 3px solid var(--teal); border-radius: 12px;
+            padding: 24px 28px; margin: 24px 0;
+        }
+        .highlight-box p { margin: 0; color: var(--text); font-size: 15px; line-height: 1.8; }
+
+        .tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+        .tech-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px;
+            transition: all 0.2s;
+        }
+        .tech-card:hover { border-color: rgba(2,195,154,0.4); transform: translateY(-2px); }
+        .tech-card .icon { font-size: 28px; margin-bottom: 10px; }
+        .tech-card h3 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .tech-card p { font-size: 12px; color: var(--text3); margin: 0; line-height: 1.5; }
+
+        .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
+        .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+        .metric-num { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; color: var(--teal); }
+        .metric-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+        .timeline { position: relative; padding-left: 32px; margin-top: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--teal), transparent); }
+        .timeline-item { position: relative; margin-bottom: 32px; }
+        .timeline-dot { position: absolute; left: -28px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 12px rgba(2,195,154,0.4); }
+        .timeline-item h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+        .timeline-item p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+        .developer-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 20px; padding: 40px;
+            display: flex; gap: 32px; align-items: center;
+        }
+        .dev-avatar {
+            width: 80px; height: 80px; border-radius: 20px;
+            background: linear-gradient(135deg, var(--teal), var(--blue));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800;
+            color: white; flex-shrink: 0;
+            box-shadow: 0 8px 32px rgba(2,195,154,0.2);
+        }
+        .dev-info h3 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+        .dev-info .role { color: var(--teal); font-size: 13px; font-weight: 500; margin-bottom: 12px; }
+        .dev-info p { color: var(--text2); font-size: 14px; line-height: 1.7; }
+        .dev-links { display: flex; gap: 12px; margin-top: 16px; }
+        .dev-link { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; border: 1px solid var(--border); color: var(--text2); transition: all 0.2s; }
+        .dev-link:hover { border-color: var(--teal); color: var(--teal); }
+        .dev-link.primary { background: var(--teal); color: #050d1a; border-color: var(--teal); }
+
+        footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 32px 48px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text3); }
+        footer span { color: var(--teal); font-weight: 700; }
+
+        @media (max-width: 768px) {
+            nav { padding: 16px 20px; }
+            .container { padding: 100px 20px 60px; }
+            .page-hero h1 { font-size: 36px; }
+            .tech-grid { grid-template-columns: repeat(2, 1fr); }
+            .metrics-row { grid-template-columns: repeat(2, 1fr); }
+            .developer-card { flex-direction: column; padding: 24px; }
+            footer { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <nav>
+        <a href="/" class="nav-logo">
+            <div class="logo-icon">K</div>
+            <div class="logo-text"><h1>KORE</h1><span>CLINICAL OUTCOME RISK EVALUATOR</span></div>
+        </a>
+        <div class="nav-right">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/history" class="nav-link">History</a>
+            <a href="/insights" class="nav-link">Insights</a>
+            <div class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</div>
+            <a href="/app" class="nav-cta">Launch App →</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="page-hero">
+            <div class="page-badge">ABOUT KORE</div>
+            <h1>Built to save lives<br>with data science</h1>
+            <p>KORE is an end-to-end AI-powered clinical decision support system designed to predict hospital readmission risk and empower healthcare professionals.</p>
+        </div>
+
+        <!-- THE PROBLEM -->
+        <div class="section">
+            <h2>🏥 The <span>Problem</span></h2>
+            <p>Hospital readmissions are one of the most costly and preventable challenges in healthcare. When a patient is discharged and returns within 30 days, it signals incomplete treatment, clinical instability, or inadequate follow-up care.</p>
+            <div class="highlight-box">
+                <p>💡 Hospital readmissions cost the US healthcare system <strong>$26 billion annually</strong>. Approximately <strong>20% of patients</strong> are readmitted within 30 days — and up to <strong>70% of those readmissions are preventable</strong> with the right interventions.</p>
+            </div>
+            <p>The core problem: hospitals have no reliable, data-driven tool to identify high-risk patients before they leave. Doctors rely on intuition and experience — but no single physician can learn from 101,766 patient cases simultaneously. KORE can.</p>
+        </div>
+
+        <!-- THE SOLUTION -->
+        <div class="section">
+            <h2>⬡ The <span>Solution</span></h2>
+            <p>KORE combines traditional machine learning with modern Generative AI to provide complete clinical decision support — not just a number, but actionable intelligence.</p>
+            <div class="metrics-row">
+                <div class="metric-card"><div class="metric-num">91%</div><div class="metric-label">Accuracy</div></div>
+                <div class="metric-card"><div class="metric-num">0.957</div><div class="metric-label">ROC-AUC</div></div>
+                <div class="metric-card"><div class="metric-num">101K</div><div class="metric-label">Records Trained</div></div>
+                <div class="metric-card"><div class="metric-num">7</div><div class="metric-label">Languages</div></div>
+            </div>
+        </div>
+
+        <!-- HOW IT WAS BUILT -->
+        <div class="section">
+            <h2>🔬 How It Was <span>Built</span></h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>Data Collection & Exploration</h3>
+                    <p>Used the Diabetes 130-US Hospitals Dataset — 101,766 real patient records from 130 hospitals collected over 10 years (1999-2008). Analyzed 50 clinical features including demographics, diagnoses, medications, lab procedures, and outcomes.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>Data Preprocessing</h3>
+                    <p>Cleaned missing values, removed irrelevant features, applied Label Encoding to convert categorical data to numerical format. Created binary target variable: HIGH RISK (readmitted within 30 days) vs LOW RISK.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>Handling Class Imbalance with SMOTE</h3>
+                    <p>The dataset had 90,409 LOW RISK vs 11,357 HIGH RISK patients — an 8:1 imbalance. Applied SMOTE (Synthetic Minority Oversampling Technique) to create synthetic HIGH RISK samples and balance both classes.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>Model Training</h3>
+                    <p>Trained a Random Forest Classifier with 50 decision trees on the balanced dataset. Achieved 91% accuracy and 0.957 ROC-AUC on the held-out test set — well above the 0.80 industry benchmark for medical ML models.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>AI Integration</h3>
+                    <p>Integrated Groq API with Llama 3.3 70B to generate AI Doctor Reports, AI Recommendations, and a multilingual chatbot supporting 7 languages — transforming raw predictions into actionable clinical insights.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h3>Deployment</h3>
+                    <p>Built Flask web application with SQLite database for prediction history. Deployed live on Render.com using Gunicorn as the production WSGI server. Secured API keys via environment variables.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TECH STACK -->
+        <div class="section">
+            <h2>🛠️ Technology <span>Stack</span></h2>
+            <div class="tech-grid">
+                <div class="tech-card"><div class="icon">🐍</div><h3>Python 3.13</h3><p>Core programming language for all backend development</p></div>
+                <div class="tech-card"><div class="icon">🌲</div><h3>Scikit-learn</h3><p>Random Forest model training and evaluation</p></div>
+                <div class="tech-card"><div class="icon">⚖️</div><h3>Imbalanced-learn</h3><p>SMOTE for class balancing</p></div>
+                <div class="tech-card"><div class="icon">🌐</div><h3>Flask</h3><p>Web framework and REST API</p></div>
+                <div class="tech-card"><div class="icon">🤖</div><h3>Groq + Llama 3.3</h3><p>Free AI API for medical text generation</p></div>
+                <div class="tech-card"><div class="icon">🗄️</div><h3>SQLite</h3><p>Lightweight database for prediction history</p></div>
+                <div class="tech-card"><div class="icon">📊</div><h3>Power BI</h3><p>Business intelligence dashboard</p></div>
+                <div class="tech-card"><div class="icon">🚀</div><h3>Render.com</h3><p>Free cloud deployment platform</p></div>
+                <div class="tech-card"><div class="icon">🐙</div><h3>GitHub</h3><p>Version control and CI/CD pipeline</p></div>
+            </div>
+        </div>
+
+        <!-- DEVELOPER -->
+        <div class="section">
+            <h2>👨‍💻 The <span>Developer</span></h2>
+            <div class="developer-card">
+                <div class="dev-avatar">F</div>
+                <div class="dev-info">
+                    <h3>Faizan Khan</h3>
+                    <div class="role">Data Science & AI Developer · India</div>
+                    <p>Built KORE as a complete end-to-end data science project — from raw data exploration to live AI-powered deployment. Passionate about using machine learning and AI to solve real-world healthcare challenges.</p>
+                    <div class="dev-links">
+                        <a href="https://github.com/Faizan1310/KORE-Clinical-Outcome-Risk-Evaluator" class="dev-link primary" target="_blank">GitHub →</a>
+                        <a href="/app" class="dev-link">Try KORE</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div><span>⬡ KORE</span> — Clinical Outcome Risk Evaluator · Built by Faizan Khan</div>
+        <div>Powered by Random Forest ML &amp; Llama 3.3 70B</div>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.dataset.theme === 'dark') { html.dataset.theme = 'light'; btn.textContent = '🌙'; localStorage.setItem('theme', 'light'); }
+            else { html.dataset.theme = 'dark'; btn.textContent = '☀️'; localStorage.setItem('theme', 'dark'); }
+        }
+        const saved = localStorage.getItem('theme');
+        if (saved) { document.documentElement.dataset.theme = saved; document.getElementById('themeBtn').textContent = saved === 'light' ? '🌙' : '☀️'; }
+    </script>
+</body>
+</html>
