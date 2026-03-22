@@ -410,6 +410,46 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="form-group">
+    <label>Admission Type</label>
+    <div class="input-wrap">
+        <span class="input-icon">🚨</span>
+        <select name="admission_type_id">
+            <option value="1">Emergency</option>
+            <option value="2">Urgent</option>
+            <option value="3">Elective</option>
+            <option value="4">Newborn</option>
+            <option value="5">Not Available</option>
+        </select>
+    </div>
+</div>
+<div class="form-group">
+    <label>Discharge Type</label>
+    <div class="input-wrap">
+        <span class="input-icon">🏠</span>
+        <select name="discharge_disposition_id">
+            <option value="1">Discharged to Home</option>
+            <option value="2">Care Facility</option>
+            <option value="3">Skilled Nursing</option>
+            <option value="6">Home Health Care</option>
+            <option value="11">Expired</option>
+        </select>
+    </div>
+</div>
+<div class="form-group">
+    <label>Num Procedures</label>
+    <div class="input-wrap">
+        <span class="input-icon">⚕️</span>
+        <input type="number" name="num_procedures" min="0" max="6" required placeholder="0–6">
+    </div>
+</div>
+<div class="form-group">
+    <label>Prior Admissions</label>
+    <div class="input-wrap">
+        <span class="input-icon">📅</span>
+        <input type="number" name="number_inpatient" min="0" max="20" required placeholder="0–20">
+    </div>
+</div>
                     </div>
                     <button type="submit" class="submit-btn" style="margin-top:16px">
                         ⬡ Evaluate Risk with KORE
