@@ -7,6 +7,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px; cursor: pointer; padding: 8px;
+}
+.hamburger span {
+    width: 24px; height: 2px;
+    background: var(--text); border-radius: 2px;
+}
+.mobile-menu {
+    display: none;
+    flex-direction: column;
+    position: fixed; top: 62px; left: 0; right: 0;
+    background: rgba(5,13,26,0.98);
+    backdrop-filter: blur(20px);
+    padding: 20px; gap: 12px;
+    border-bottom: 1px solid var(--border);
+    z-index: 99; transform: translateY(-100%);
+    opacity: 0; transition: all 0.3s;
+    pointer-events: none;
+}
+.mobile-menu.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+.mobile-menu a {
+    color: var(--text); text-decoration: none;
+    font-size: 16px; padding: 12px 16px;
+    border-radius: 8px; border: 1px solid var(--border);
+    text-align: center;
+}
         :root {
             --bg: #050d1a; --bg2: #0a1628; --surface: #0f1f35; --surface2: #162440;
             --border: rgba(2,195,154,0.15); --teal: #02C39A; --teal2: #00a896;
@@ -204,13 +236,36 @@
         footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text3); margin-top: 12px; }
         footer span { color: var(--teal); font-weight: 700; }
 
-        @media (max-width: 900px) {
-            .main { flex-direction: column; padding: 20px; }
-            .left-col { width: 100%; }
-            .hero-bar { flex-direction: column; gap: 12px; padding: 16px 20px; }
-            .chat-section { padding: 0 20px 20px; }
-            footer { flex-direction: column; gap: 8px; padding: 20px; }
-        }
+@media (max-width: 768px) {
+    nav { padding: 12px 16px; }
+    .nav-right .nav-link { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: flex; }
+
+    .hero-bar { flex-direction: column; gap: 10px; padding: 16px 20px; }
+    .hero-bar-left h2 { font-size: 16px; }
+    .hero-badges { flex-wrap: wrap; gap: 6px; }
+    .hbadge { font-size: 10px; padding: 4px 10px; }
+
+    .main { flex-direction: column; padding: 16px; gap: 16px; }
+    .left-col { width: 100%; }
+    .right-col { width: 100%; }
+
+    .form-grid { grid-template-columns: 1fr; gap: 12px; }
+
+    .chat-section { padding: 0 16px 20px; }
+    .chat-controls { flex-wrap: wrap; }
+    .lang-select { width: 100%; }
+    .chat-input { width: 100%; }
+    .send-btn { width: 100%; }
+
+    footer { flex-direction: column; gap: 8px; padding: 16px; text-align: center; font-size: 11px; }
+}
+
+@media (min-width: 769px) {
+    .hamburger { display: none !important; }
+    .mobile-menu { display: none !important; }
+}
     </style>
 </head>
 <body>
@@ -242,8 +297,19 @@
             <a href="/insights" class="nav-link">📈 Insights</a>
             <a href="/history" class="nav-link">📋 History</a>
             <div class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</div>
+            <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
         </div>
     </nav>
+    <div class="mobile-menu" id="mobileMenu">
+    <a href="/">🏠 Home</a>
+    <a href="/about">About</a>
+    <a href="/insights">📈 Insights</a>
+    <a href="/history">📋 History</a>
+</div>
 
     <!-- HERO BAR -->
     <div class="hero-bar">
