@@ -109,9 +109,9 @@ def predict():
     insulin = int(request.form['insulin'])
     change = int(request.form['change'])
     admission_type_id = int(request.form.get('admission_type_id', 1))
-discharge_disposition_id = int(request.form.get('discharge_disposition_id', 1))
-num_procedures = int(request.form.get('num_procedures', 0))
-number_inpatient = int(request.form.get('number_inpatient', 0))
+    discharge_disposition_id = int(request.form.get('discharge_disposition_id', 1))
+    num_procedures = int(request.form.get('num_procedures', 0))
+    number_inpatient = int(request.form.get('number_inpatient', 0))
 
     full_features = pd.DataFrame(np.zeros((1, len(feature_names))), columns=feature_names)
     full_features['age'] = age
@@ -122,10 +122,10 @@ number_inpatient = int(request.form.get('number_inpatient', 0))
     full_features['number_diagnoses'] = number_diagnoses
     full_features['insulin'] = insulin
     full_features['change'] = change
-full_features['admission_type_id'] = admission_type_id
-full_features['discharge_disposition_id'] = discharge_disposition_id
-full_features['num_procedures'] = num_procedures
-full_features['number_inpatient'] = number_inpatient
+    full_features['admission_type_id'] = admission_type_id
+    full_features['discharge_disposition_id'] = discharge_disposition_id
+    full_features['num_procedures'] = num_procedures
+    full_features['number_inpatient'] = number_inpatient
 
     probability = model.predict_proba(full_features)[0][1]
     risk = "HIGH RISK" if probability >= 0.5 else "LOW RISK"
