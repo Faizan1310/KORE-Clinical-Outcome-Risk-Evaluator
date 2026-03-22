@@ -99,21 +99,84 @@
             border-top: 1px solid #e2e8f0; margin-top: 20px;
         }
         .footer span { color: #02C39A; font-weight: 700; }
+        .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px; cursor: pointer; padding: 8px;
+}
+.hamburger span {
+    width: 24px; height: 2px;
+    background: white; border-radius: 2px;
+}
+.mobile-menu {
+    display: none;
+    flex-direction: column;
+    position: fixed; top: 62px; left: 0; right: 0;
+    background: rgba(5,13,26,0.98);
+    backdrop-filter: blur(20px);
+    padding: 20px; gap: 12px;
+    border-bottom: 1px solid rgba(2,195,154,0.15);
+    z-index: 99; transform: translateY(-100%);
+    opacity: 0; transition: all 0.3s;
+    pointer-events: none;
+}
+.mobile-menu.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: all;
+}
+.mobile-menu a {
+    color: white; text-decoration: none;
+    font-size: 16px; padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(2,195,154,0.15);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    nav { padding: 12px 16px; }
+    nav a { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: flex; }
+
+    .container { padding: 100px 16px 40px; }
+    .stats-row { flex-direction: column; }
+    .stat-card { min-width: 100%; }
+    .insights-card { padding: 20px 16px; }
+    .insights-text { font-size: 13px; padding: 16px; }
+
+    footer { flex-direction: column; gap: 8px; text-align: center; padding: 16px; }
+}
+
+@media (min-width: 769px) {
+    .hamburger { display: none !important; }
+    .mobile-menu { display: none !important; }
+}
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="nav-brand">
-            <h1>⬡ KORE</h1>
-            <span>CLINICAL OUTCOME RISK EVALUATOR</span>
+   <nav>
+    <div class="nav-brand">
+        <h1>⬡ KORE</h1>
+        <span>CLINICAL OUTCOME RISK EVALUATOR</span>
+    </div>
+    <div class="nav-links">
+        <a href="/">🔍 New Assessment</a>
+        <a href="/history">📋 History</a>
+        <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-        <div class="nav-links">
-            <a href="/">🔍 New Assessment</a>
-            <a href="/history">📋 History</a>
-        </div>
-    </nav>
+    </div>
+</nav>
 
+<div class="mobile-menu" id="mobileMenu">
+    <a href="/">🏠 Home</a>
+    <a href="/app">🔍 New Assessment</a>
+    <a href="/history">📋 History</a>
+</div>
     <div class="hero">
         <h2>📈 KORE AI Insights Dashboard</h2>
         <p>AI-generated trend analysis from all patient assessments</p>
@@ -170,6 +233,15 @@
         <span>⬡ KORE</span> — Clinical Outcome Risk Evaluator &nbsp;·&nbsp;
         Powered by Random Forest ML &amp; Llama 3.3 70B
     </div>
-
+<script>
+function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+}
+document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => {
+        document.getElementById('mobileMenu').classList.remove('open');
+    });
+});
+</script>
 </body>
 </html>
