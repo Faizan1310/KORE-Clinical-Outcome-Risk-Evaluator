@@ -158,6 +158,28 @@
     .hamburger { display: none !important; }
     .mobile-menu { display: none !important; }
 }
+.charts-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+}
+.chart-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 20px;
+}
+.chart-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+    .charts-row { grid-template-columns: 1fr; }
+}
     </style>
 </head>
 <body>
@@ -187,6 +209,26 @@
 </div>
     <div class="container">
         <div class="page-header">
+            {% if records %}
+<!-- CHARTS ROW -->
+<div class="charts-row">
+    <!-- Donut Chart -->
+    <div class="chart-card">
+        <div class="chart-title">🍩 Risk Distribution</div>
+        <canvas id="donutChart"></canvas>
+    </div>
+    <!-- Bar Chart -->
+    <div class="chart-card">
+        <div class="chart-title">📊 Predictions Per Day</div>
+        <canvas id="barChart"></canvas>
+    </div>
+    <!-- Line Chart -->
+    <div class="chart-card">
+        <div class="chart-title">📈 Risk Probability Trend</div>
+        <canvas id="lineChart"></canvas>
+    </div>
+</div>
+{% endif %}
             <h2>📋 Prediction History</h2>
             <p>All patient risk assessments performed by KORE</p>
         </div>
@@ -262,6 +304,91 @@ function confirmClear() {
         alert("❌ Incorrect password! Access denied.");
     }
 }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+{% if records %}
+// Count HIGH vs LOW RISK
+const highCount = {{ records | selectattr('risk', 'equalto', 'HIGH RISK') | list | length }};
+const lowCount = {{ records | selectattr('risk', 'equalto', 'LOW RISK') | list | length }};
+
+// Donut Chart
+new Chart(document.getElementById('donutChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['HIGH RISK', 'LOW RISK'],
+        datasets: [{
+            data: [highCount, lowCount],
+            backgroundColor: ['#ff4d6d', '#02C39A'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        cutout: '70%',
+        plugins: {
+            legend: { position: 'bottom' }
+        }
+    }
+});
+
+// Bar Chart - predictions per day
+const dateGroups = {};
+{% for r in records %}
+const d{{ loop.index }} = "{{ r.date.strftime('%d %b') }}";
+dateGroups[d{{ loop.index }}] = (dateGroups[d{{ loop.index }}] || 0) + 1;
+{% endfor %}
+
+new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: {
+        labels: Object.keys(dateGroups).slice(-7),
+        datasets: [{
+            label: 'Predictions',
+            data: Object.values(dateGroups).slice(-7),
+            backgroundColor: '#065A82',
+            borderRadius: 6
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+// Line Chart - probability trend
+const probLabels = [];
+const probData = [];
+{% for r in records[-10:] %}
+probLabels.push("{{ r.date.strftime('%d %b') }}");
+probData.push({{ r.probability }});
+{% endfor %}
+
+new Chart(document.getElementById('lineChart'), {
+    type: 'line',
+    data: {
+        labels: probLabels,
+        datasets: [{
+            label: 'Risk %',
+            data: probData,
+            borderColor: '#02C39A',
+            backgroundColor: 'rgba(2,195,154,0.1)',
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#02C39A'
+        }]
+    },
+    options: {
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, max: 100 },
+            x: { grid: { display: false } }
+        }
+    }
+});
+{% endif %}
 </script>
 </body>
 </html>
