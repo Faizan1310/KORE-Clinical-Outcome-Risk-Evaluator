@@ -165,15 +165,22 @@ def predict():
     chart_labels = top_features.index.tolist()
     chart_values = [round(v * 100, 2) for v in top_features.values.tolist()]
 
-    return render_template('index.html',
+   return render_template('index.html',
                            prediction=risk,
                            probability=prob_percent,
                            color=color,
                            chart_labels=chart_labels,
                            chart_values=chart_values,
                            ai_report=ai_report,
-                           ai_recommendations=ai_recommendations)
-
+                           ai_recommendations=ai_recommendations,
+                           age_val=age,
+                           gender_val='Male' if gender == 1 else 'Female',
+                           time_val=time_in_hospital,
+                           med_val=num_medications,
+                           lab_val=num_lab_procedures,
+                           diag_val=number_diagnoses,
+                           insulin_val='Yes' if insulin == 1 else 'No',
+                           change_val='Yes' if change == 1 else 'No')
 @app.route('/history')
 def history():
     records = Prediction.query.order_by(Prediction.date.desc()).all()
@@ -246,7 +253,7 @@ Provide a helpful, accurate, and empathetic response. Keep it concise (2-3 sente
 def clear_history():
     Prediction.query.delete()
     db.session.commit()
-    return redirect(url_for('history'))
+    return redirect(url_for('history')) 
 
 if __name__ == '__main__':
     with app.app_context():
