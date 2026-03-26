@@ -165,7 +165,7 @@ def predict():
     chart_labels = top_features.index.tolist()
     chart_values = [round(v * 100, 2) for v in top_features.values.tolist()]
 
-        return render_template('index.html',
+    return render_template('index.html',
                            prediction=risk,
                            probability=prob_percent,
                            color=color,
