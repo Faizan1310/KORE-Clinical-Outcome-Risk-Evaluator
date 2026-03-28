@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KORE — Contact & Feedback</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <!-- PWA -->
+    <meta name="theme-color" content="#02C39A">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/static/manifest.json">
+    <style>
+        :root {
+            --bg: #050d1a; --bg2: #0a1628; --surface: #0f1f35; --surface2: #162440;
+            --border: rgba(2,195,154,0.15); --teal: #02C39A; --teal2: #00a896;
+            --blue: #065A82; --text: #e8f4f8; --text2: #8ab4c8; --text3: #4a7a94;
+        }
+        [data-theme="light"] {
+            --bg: #f0f6ff; --bg2: #e4eef9; --surface: #ffffff; --surface2: #f0f6ff;
+            --border: rgba(6,90,130,0.15); --text: #0a1628; --text2: #2d5f7a; --text3: #4a7a94;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); transition: all 0.3s; }
+        .bg-grid {
+            position: fixed; inset: 0; z-index: 0;
+            background-image: linear-gradient(rgba(2,195,154,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(2,195,154,0.03) 1px, transparent 1px);
+            background-size: 50px 50px; pointer-events: none;
+        }
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            padding: 14px 40px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5,13,26,0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        [data-theme="light"] nav { background: rgba(240,246,255,0.9); }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--teal), var(--blue)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; font-family: 'Syne', sans-serif; }
+        .logo-text h1 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--teal); letter-spacing: 2px; }
+        .logo-text span { font-size: 9px; color: var(--text3); letter-spacing: 1px; }
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .nav-link { color: var(--text2); text-decoration: none; font-size: 13px; padding: 7px 14px; border-radius: 7px; transition: all 0.2s; }
+        .nav-link:hover { color: var(--teal); }
+        .theme-btn { width: 34px; height: 34px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+
+        .container { max-width: 700px; margin: 0 auto; padding: 60px 20px 80px; position: relative; z-index: 1; }
+
+        .page-hero { text-align: center; margin-bottom: 48px; }
+        .page-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(2,195,154,0.1); border: 1px solid rgba(2,195,154,0.3); padding: 6px 16px; border-radius: 100px; font-size: 12px; color: var(--teal); font-weight: 500; margin-bottom: 20px; letter-spacing: 1px; }
+        .page-hero h1 { font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 800; margin-bottom: 12px; }
+        .page-hero p { font-size: 15px; color: var(--text2); line-height: 1.7; }
+
+        /* SUCCESS MESSAGE */
+        .success-card {
+            background: rgba(2,195,154,0.1);
+            border: 1px solid rgba(2,195,154,0.3);
+            border-radius: 16px; padding: 40px;
+            text-align: center; margin-bottom: 32px;
+            animation: fadeUp 0.5s ease;
+        }
+        .success-card h2 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: var(--teal); margin-bottom: 12px; }
+        .success-card p { color: var(--text2); font-size: 15px; }
+
+        /* FORM */
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px; padding: 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+        input, textarea, select {
+            width: 100%; padding: 12px 16px;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; font-size: 14px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+        }
+        [data-theme="light"] input, [data-theme="light"] textarea, [data-theme="light"] select { background: var(--bg2); }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(2,195,154,0.1); }
+        textarea { resize: vertical; min-height: 120px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        /* RATING */
+        .rating-group { display: flex; gap: 12px; flex-wrap: wrap; }
+        .rating-btn {
+            padding: 10px 20px; border-radius: 8px;
+            border: 1px solid var(--border); background: var(--surface2);
+            color: var(--text2); cursor: pointer; font-size: 14px;
+            transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+        }
+        .rating-btn:hover, .rating-btn.active {
+            border-color: var(--teal); color: var(--teal);
+            background: rgba(2,195,154,0.1);
+        }
+
+        .submit-btn {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, var(--teal), var(--teal2));
+            color: #050d1a; border: none; border-radius: 10px;
+            font-size: 15px; font-weight: 700; cursor: pointer;
+            font-family: 'Syne', sans-serif; letter-spacing: 1px;
+            transition: all 0.2s; margin-top: 8px;
+        }
+        .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(2,195,154,0.3); }
+
+        /* CONTACT INFO */
+        .contact-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+        .info-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 20px; text-align: center;
+            transition: all 0.2s;
+        }
+        .info-card:hover { border-color: rgba(2,195,154,0.3); }
+        .info-card .icon { font-size: 24px; margin-bottom: 8px; }
+        .info-card h3 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+        .info-card p { font-size: 12px; color: var(--text3); }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; }
+        .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; }
+        .mobile-menu { display: none; flex-direction: column; position: fixed; top: 62px; left: 0; right: 0; background: rgba(5,13,26,0.98); backdrop-filter: blur(20px); padding: 20px; gap: 12px; border-bottom: 1px solid var(--border); z-index: 99; transform: translateY(-100%); opacity: 0; transition: all 0.3s; pointer-events: none; }
+        .mobile-menu.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+        .mobile-menu a { color: var(--text); text-decoration: none; font-size: 16px; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+
+        @media (max-width: 768px) {
+            nav { padding: 12px 16px; }
+            .nav-right .nav-link { display: none; }
+            .hamburger { display: flex; }
+            .mobile-menu { display: flex; }
+            .container { padding: 40px 16px 60px; }
+            .page-hero h1 { font-size: 28px; }
+            .form-card { padding: 24px 16px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .contact-info { grid-template-columns: 1fr; }
+        }
+        @media (min-width: 769px) {
+            .hamburger { display: none !important; }
+            .mobile-menu { display: none !important; }
+        }
+
+        footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text3); }
+        footer span { color: var(--teal); font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <nav>
+        <a href="/" class="nav-logo">
+            <div class="logo-icon">K</div>
+            <div class="logo-text"><h1>KORE</h1><span>CLINICAL OUTCOME RISK EVALUATOR</span></div>
+        </a>
+        <div class="nav-right">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/app" class="nav-link">App</a>
+            <a href="/about" class="nav-link">About</a>
+            <a href="/history" class="nav-link">History</a>
+            <div class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</div>
+            <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/">🏠 Home</a>
+        <a href="/app">🔍 Assessment</a>
+        <a href="/about">About</a>
+        <a href="/history">📋 History</a>
+        <a href="/insights">📈 Insights</a>
+    </div>
+
+    <div class="container">
+        <div class="page-hero">
+            <div class="page-badge">💬 CONTACT & FEEDBACK</div>
+            <h1>We'd love to hear from you</h1>
+            <p>Share your feedback, report issues, or ask questions about KORE</p>
+        </div>
+
+        {% if success %}
+        <div class="success-card">
+            <h2>✅ Thank you for your feedback!</h2>
+            <p>Your message has been received. We appreciate you taking the time to help improve KORE!</p>
+        </div>
+        {% endif %}
+
+        <div class="form-card">
+            <form method="POST" action="/contact">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" name="name" required placeholder="Md Faizan Khan">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" required placeholder="your@email.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <select name="subject">
+                        <option value="General Feedback">💬 General Feedback</option>
+                        <option value="Bug Report">🐛 Bug Report</option>
+                        <option value="Feature Request">✨ Feature Request</option>
+                        <option value="Question">❓ Question about KORE</option>
+                        <option value="Partnership">🤝 Partnership/Collaboration</option>
+                        <option value="Other">📝 Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea name="message" required placeholder="Tell us what you think about KORE..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Rate KORE</label>
+                    <div class="rating-group">
+                        <button type="button" class="rating-btn" onclick="setRating('⭐ Poor')">⭐ Poor</button>
+                        <button type="button" class="rating-btn" onclick="setRating('⭐⭐ Fair')">⭐⭐ Fair</button>
+                        <button type="button" class="rating-btn" onclick="setRating('⭐⭐⭐ Good')">⭐⭐⭐ Good</button>
+                        <button type="button" class="rating-btn" onclick="setRating('⭐⭐⭐⭐ Great')">⭐⭐⭐⭐ Great</button>
+                        <button type="button" class="rating-btn" onclick="setRating('⭐⭐⭐⭐⭐ Excellent')">⭐⭐⭐⭐⭐ Excellent</button>
+                    </div>
+                    <input type="hidden" name="rating" id="ratingInput" value="Not rated">
+                </div>
+                <button type="submit" class="submit-btn">📤 Send Feedback</button>
+            </form>
+        </div>
+
+        <div class="contact-info">
+            <div class="info-card">
+                <div class="icon">🌐</div>
+                <h3>Live App</h3>
+                <p>kore-ai-fnf8.onrender.com</p>
+            </div>
+            <div class="info-card">
+                <div class="icon">💻</div>
+                <h3>GitHub</h3>
+                <p>Faizan1310/KORE</p>
+            </div>
+            <div class="info-card">
+                <div class="icon">🇮🇳</div>
+                <h3>Location</h3>
+                <p>India</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div><span>⬡ KORE</span> — Clinical Outcome Risk Evaluator · Built by Md Faizan Khan</div>
+        <div>Powered by Random Forest ML &amp; Llama 3.3 70B</div>
+    </footer>
+
+    <script>
+        function setRating(rating) {
+            document.getElementById('ratingInput').value = rating;
+            document.querySelectorAll('.rating-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.dataset.theme === 'dark') { html.dataset.theme = 'light'; btn.textContent = '🌙'; localStorage.setItem('kore_theme', 'light'); }
+            else { html.dataset.theme = 'dark'; btn.textContent = '☀️'; localStorage.setItem('kore_theme', 'dark'); }
+        }
+        function toggleMenu() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        }
+        const saved = localStorage.getItem('kore_theme');
+        if (saved) { document.documentElement.dataset.theme = saved; document.getElementById('themeBtn').textContent = saved === 'light' ? '🌙' : '☀️'; }
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js')
+                    .then(reg => console.log('KORE PWA ready!'))
+                    .catch(err => console.log('SW error:', err));
+            });
+        }
+    </script>
+</body>
+</html>

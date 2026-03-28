@@ -33,6 +33,14 @@ class Prediction(db.Model):
     ai_report = db.Column(db.Text)
     ai_recommendations = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.utcnow)
+    class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    subject = db.Column(db.String(200))
+    message = db.Column(db.Text)
+    rating = db.Column(db.String(10))
+    date = db.Column(db.DateTime, default=datetime.utcnow)
 
 with open('../outputs/rf_model.pkl', 'rb') as f:
     model = pickle.load(f)
@@ -97,6 +105,29 @@ def home():
 @app.route('/about')
 def about():
     return render_template('about.html')
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    success = False
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        subject = request.form.get('subject')
+        message = request.form.get('message')
+        rating = request.form.get('rating')
+        
+        # Save to database
+        feedback = Feedback(
+            name=name,
+            email=email,
+            subject=subject,
+            message=message,
+            rating=rating
+        )
+        db.session.add(feedback)
+        db.session.commit()
+        success = True
+    
+    return render_template('contact.html', success=success)
 
 @app.route('/predict', methods=['POST'])
 def predict():
