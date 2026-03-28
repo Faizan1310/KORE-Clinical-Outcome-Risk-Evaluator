@@ -377,8 +377,14 @@ def admin():
         return redirect(url_for('dashboard'))
     try:
         all_users = User.query.all()
-        all_predictions = Prediction.query.order_by(Prediction.date.desc()).all()
-        all_feedback = Feedback.query.order_by(Feedback.date.desc()).all()
+        try:
+            all_predictions = Prediction.query.order_by(Prediction.date.desc()).all()
+        except:
+            all_predictions = []
+        try:
+            all_feedback = Feedback.query.order_by(Feedback.date.desc()).all()
+        except:
+            all_feedback = []
         total_users = len(all_users)
         total_predictions = len(all_predictions)
         high_risk = sum(1 for p in all_predictions if p.risk == 'HIGH RISK')
@@ -390,8 +396,17 @@ def admin():
                                total_predictions=total_predictions,
                                high_risk=high_risk)
     except Exception as e:
-        return f"Admin error: {str(e)}" 
-
+        return f"Admin error: {str(e)}"
+    
+@app.route('/migrate-db-kore2026')
+def migrate_db():
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.text('ALTER TABLE prediction ADD COLUMN user_id INTEGER'))
+            conn.commit()
+        return "Migration successful!"
+    except Exception as e:
+        return f"Migration error (column may already exist): {str(e)}"    
 @app.before_request
 def create_tables():
     db.create_all()
