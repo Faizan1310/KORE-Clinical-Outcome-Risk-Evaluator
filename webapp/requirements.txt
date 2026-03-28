@@ -7,3 +7,5 @@ imbalanced-learn
 gunicorn
 groq
 python-dotenv
+Flask-Login
+werkzeug
