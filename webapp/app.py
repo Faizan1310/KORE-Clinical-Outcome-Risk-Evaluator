@@ -345,14 +345,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('landing'))
-@app.route('/setup-admin-kore2026')
-def setup_admin():
-    user = User.query.first()
-    if user:
-        user.is_admin = True
-        db.session.commit()
-        return f"Admin set for {user.username}!"
-    return "No users found!"
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -397,16 +389,7 @@ def admin():
                                high_risk=high_risk)
     except Exception as e:
         return f"Admin error: {str(e)}"
-    
-@app.route('/migrate-db-kore2026')
-def migrate_db():
-    try:
-        with db.engine.connect() as conn:
-            conn.execute(db.text('ALTER TABLE prediction ADD COLUMN user_id INTEGER'))
-            conn.commit()
-        return "Migration successful!"
-    except Exception as e:
-        return f"Migration error (column may already exist): {str(e)}"    
+        
 @app.before_request
 def create_tables():
     db.create_all()
