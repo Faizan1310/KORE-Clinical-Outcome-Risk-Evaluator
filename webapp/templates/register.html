@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KORE — Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#02C39A">
+    <style>
+        :root {
+            --bg: #050d1a; --surface: #0f1f35; --surface2: #162440;
+            --border: rgba(2,195,154,0.15); --teal: #02C39A; --teal2: #00a896;
+            --blue: #065A82; --text: #e8f4f8; --text2: #8ab4c8; --text3: #4a7a94;
+        }
+        [data-theme="light"] {
+            --bg: #f0f6ff; --surface: #ffffff; --surface2: #f0f6ff;
+            --border: rgba(6,90,130,0.15); --text: #0a1628; --text2: #2d5f7a; --text3: #4a7a94;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .bg-grid { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(2,195,154,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(2,195,154,0.03) 1px, transparent 1px); background-size: 50px 50px; pointer-events: none; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px 40px; width: 100%; max-width: 420px; position: relative; z-index: 1; box-shadow: 0 24px 64px rgba(0,0,0,0.3); animation: fadeUp 0.5s ease; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; justify-content: center; }
+        .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--teal), var(--blue)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: white; font-family: 'Syne', sans-serif; box-shadow: 0 0 20px rgba(2,195,154,0.3); }
+        .logo-text h1 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--teal); letter-spacing: 2px; }
+        .logo-text span { font-size: 10px; color: var(--text3); letter-spacing: 1px; }
+        h2 { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+        .subtitle { text-align: center; color: var(--text2); font-size: 14px; margin-bottom: 32px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; font-size: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+        [data-theme="light"] input { background: #f0f6ff; }
+        input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(2,195,154,0.1); }
+        .btn { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--teal), var(--teal2)); color: #050d1a; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Syne', sans-serif; letter-spacing: 1px; transition: all 0.2s; margin-top: 8px; }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(2,195,154,0.3); }
+        .error { background: rgba(255,77,109,0.1); border: 1px solid rgba(255,77,109,0.3); color: #ff4d6d; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; text-align: center; }
+        .link { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text2); }
+        .link a { color: var(--teal); text-decoration: none; font-weight: 600; }
+        .link a:hover { text-decoration: underline; }
+        .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .divider span { font-size: 12px; color: var(--text3); }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="card">
+        <div class="logo">
+            <div class="logo-icon">K</div>
+            <div class="logo-text">
+                <h1>KORE</h1>
+                <span>CLINICAL OUTCOME RISK EVALUATOR</span>
+            </div>
+        </div>
+        <h2>Create account</h2>
+        <p class="subtitle">Join KORE and start predicting patient risk</p>
+
+        {% if error %}
+        <div class="error">❌ {{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/register">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" required placeholder="Choose a username">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="Create a password">
+            </div>
+            <button type="submit" class="btn">⬡ Create KORE Account</button>
+        </form>
+
+        <div class="divider"><span>or</span></div>
+
+        <div class="link">
+            Already have an account? <a href="/login">Sign in →</a>
+        </div>
+        <div class="link" style="margin-top:12px">
+            <a href="/">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
