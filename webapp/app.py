@@ -65,11 +65,16 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-with open('../outputs/rf_model.pkl', 'rb') as f:
-    model = pickle.load(f)
+model = None
+feature_names = None
 
-sample = pd.read_csv('../outputs/cleaned_data.csv')
-feature_names = sample.drop(columns=['readmitted_30']).columns.tolist()
+def load_model():
+    global model, feature_names
+    if model is None:
+        with open('../outputs/rf_model.pkl', 'rb') as f:
+            model = pickle.load(f)
+        sample = pd.read_csv('../outputs/cleaned_data.csv')
+        feature_names = sample.drop(columns=['readmitted_30']).columns.tolist()
 
 def generate_ai_report(patient_data, probability, risk):
     prompt = f"""You are a medical AI assistant. Based on the following patient data, generate a concise professional medical summary report.
@@ -169,7 +174,8 @@ def predict():
     discharge_disposition_id = int(request.form.get('discharge_disposition_id', 1))
     num_procedures = int(request.form.get('num_procedures', 0))
     number_inpatient = int(request.form.get('number_inpatient', 0))
-
+    
+    load_model()
     full_features = pd.DataFrame(np.zeros((1, len(feature_names))), columns=feature_names)
     full_features['age'] = age
     full_features['gender'] = gender
