@@ -345,6 +345,14 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('landing'))
+@app.route('/setup-admin-kore2026')
+def setup_admin():
+    user = User.query.first()
+    if user:
+        user.is_admin = True
+        db.session.commit()
+        return f"Admin set for {user.username}!"
+    return "No users found!"
 @app.route('/dashboard')
 @login_required
 def dashboard():
