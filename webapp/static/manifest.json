@@ -1,0 +1,22 @@
+{
+    "name": "KORE — Clinical Outcome Risk Evaluator",
+    "short_name": "KORE",
+    "description": "AI-powered hospital readmission prediction system",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#050d1a",
+    "theme_color": "#02C39A",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/static/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
