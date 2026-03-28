@@ -347,9 +347,12 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    user_predictions = Prediction.query.filter_by(
-        user_id=current_user.id
-    ).order_by(Prediction.date.desc()).all()
+    try:
+        user_predictions = Prediction.query.filter_by(
+            user_id=current_user.id
+        ).order_by(Prediction.date.desc()).all()
+    except:
+        user_predictions = []
     total = len(user_predictions)
     high_risk = sum(1 for p in user_predictions if p.risk == 'HIGH RISK')
     return render_template('dashboard.html',
