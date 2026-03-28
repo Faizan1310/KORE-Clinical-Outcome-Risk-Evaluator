@@ -37,6 +37,7 @@ class Prediction(db.Model):
     probability = db.Column(db.Float)
     ai_report = db.Column(db.Text)
     ai_recommendations = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Feedback(db.Model):
@@ -117,6 +118,7 @@ def landing():
     return render_template('landing.html')
 
 @app.route('/app')
+@login_required
 def home():
     return render_template('index.html')
 
@@ -124,6 +126,7 @@ def home():
 def about():
     return render_template('about.html')
 @app.route('/contact', methods=['GET', 'POST'])
+@login_required
 def contact():
     success = False
     if request.method == 'POST':
@@ -148,6 +151,7 @@ def contact():
     return render_template('contact.html', success=success)
 
 @app.route('/predict', methods=['POST'])
+@login_required
 def predict():
     age = int(request.form['age'])
     gender = int(request.form['gender'])
@@ -195,6 +199,7 @@ def predict():
     ai_recommendations = generate_recommendations(patient_data, prob_percent, risk)
 
     record = Prediction(
+        user_id=current_user.id,
         age=age, gender=patient_data['gender'],
         time_in_hospital=time_in_hospital,
         num_medications=num_medications,
@@ -231,11 +236,13 @@ def predict():
                            insulin_val='Yes' if insulin == 1 else 'No',
                            change_val='Yes' if change == 1 else 'No')
 @app.route('/history')
+@login_required
 def history():
     records = Prediction.query.order_by(Prediction.date.desc()).all()
     return render_template('history.html', records=records)
 
 @app.route('/insights')
+@login_required
 def insights():
     records = Prediction.query.all()
     if not records:
@@ -336,7 +343,39 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('landing')) 
+    return redirect(url_for('landing'))
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    user_predictions = Prediction.query.filter_by(
+        user_id=current_user.id
+    ).order_by(Prediction.date.desc()).all()
+    total = len(user_predictions)
+    high_risk = sum(1 for p in user_predictions if p.risk == 'HIGH RISK')
+    return render_template('dashboard.html',
+                           user=current_user,
+                           predictions=user_predictions,
+                           total=total,
+                           high_risk=high_risk)
+
+@app.route('/admin')
+@login_required
+def admin():
+    if not current_user.is_admin:
+        return redirect(url_for('dashboard'))
+    all_users = User.query.all()
+    all_predictions = Prediction.query.order_by(Prediction.date.desc()).all()
+    all_feedback = Feedback.query.order_by(Feedback.date.desc()).all()
+    total_users = len(all_users)
+    total_predictions = len(all_predictions)
+    high_risk = sum(1 for p in all_predictions if p.risk == 'HIGH RISK')
+    return render_template('admin.html',
+                           users=all_users,
+                           predictions=all_predictions,
+                           feedback=all_feedback,
+                           total_users=total_users,
+                           total_predictions=total_predictions,
+                           high_risk=high_risk) 
 
 if __name__ == '__main__':
     with app.app_context():

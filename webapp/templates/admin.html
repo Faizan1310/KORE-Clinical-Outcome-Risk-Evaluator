@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KORE — Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#02C39A">
+    <style>
+        :root {
+            --bg: #050d1a; --surface: #0f1f35; --surface2: #162440;
+            --border: rgba(2,195,154,0.15); --teal: #02C39A; --teal2: #00a896;
+            --blue: #065A82; --text: #e8f4f8; --text2: #8ab4c8; --text3: #4a7a94;
+        }
+        [data-theme="light"] {
+            --bg: #f0f6ff; --surface: #ffffff; --surface2: #f0f6ff;
+            --border: rgba(6,90,130,0.15); --text: #0a1628; --text2: #2d5f7a; --text3: #4a7a94;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+        .bg-grid { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(2,195,154,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(2,195,154,0.03) 1px, transparent 1px); background-size: 50px 50px; pointer-events: none; }
+
+        nav {
+            position: sticky; top: 0; z-index: 100;
+            padding: 14px 40px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5,13,26,0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        [data-theme="light"] nav { background: rgba(240,246,255,0.9); }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--teal), var(--blue)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; font-family: 'Syne', sans-serif; }
+        .logo-text h1 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--teal); letter-spacing: 2px; }
+        .logo-text span { font-size: 9px; color: var(--text3); letter-spacing: 1px; }
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        .nav-link { color: var(--text2); text-decoration: none; font-size: 13px; padding: 7px 14px; border-radius: 7px; transition: all 0.2s; }
+        .admin-badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+        .logout-btn { color: #ff4d6d; text-decoration: none; font-size: 13px; padding: 7px 14px; border-radius: 7px; border: 1px solid rgba(255,77,109,0.3); }
+        .theme-btn { width: 34px; height: 34px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
+
+        .page-header { margin-bottom: 32px; }
+        .page-header h2 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .page-header p { color: var(--text2); font-size: 15px; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; border-top: 3px solid var(--teal); }
+        .stat-card.red { border-top-color: #ff4d6d; }
+        .stat-card.blue { border-top-color: var(--blue); }
+        .stat-card.yellow { border-top-color: #f59e0b; }
+        .stat-num { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; color: var(--teal); }
+        .stat-card.red .stat-num { color: #ff4d6d; }
+        .stat-card.blue .stat-num { color: var(--blue); }
+        .stat-card.yellow .stat-num { color: #f59e0b; }
+        .stat-label { font-size: 12px; color: var(--text3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+        .tab { padding: 10px 20px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text3); border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .section-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 16px; }
+
+        table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 14px; overflow: hidden; }
+        thead { background: linear-gradient(135deg, #1B3A6B, #065A82); }
+        thead th { padding: 12px 16px; text-align: left; color: white; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+        tbody tr:hover { background: var(--surface2); }
+        tbody td { padding: 12px 16px; font-size: 13px; color: var(--text2); }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .badge.high { background: rgba(255,77,109,0.15); color: #ff4d6d; }
+        .badge.low { background: rgba(2,195,154,0.15); color: var(--teal); }
+        .badge.admin { background: rgba(245,158,11,0.15); color: #f59e0b; }
+        .badge.user { background: rgba(6,90,130,0.15); color: var(--blue); }
+
+        .feedback-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+        .feedback-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .feedback-name { font-weight: 700; font-size: 14px; }
+        .feedback-subject { font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+        .feedback-msg { font-size: 13px; color: var(--text2); line-height: 1.7; }
+        .feedback-rating { font-size: 12px; color: #f59e0b; }
+
+        footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 20px 40px; text-align: center; font-size: 12px; color: var(--text3); }
+        footer span { color: var(--teal); font-weight: 700; }
+
+        @media (max-width: 768px) {
+            nav { padding: 12px 16px; }
+            .container { padding: 20px 16px; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            table { display: block; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <nav>
+        <a href="/" class="nav-logo">
+            <div class="logo-icon">K</div>
+            <div class="logo-text"><h1>KORE</h1><span>CLINICAL OUTCOME RISK EVALUATOR</span></div>
+        </a>
+        <div class="nav-right">
+            <span class="admin-badge">👑 ADMIN</span>
+            <a href="/dashboard" class="nav-link">My Dashboard</a>
+            <a href="/app" class="nav-link">🔍 Assess</a>
+            <div class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙</div>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>👑 Admin Dashboard</h2>
+            <p>Complete overview of KORE system — all users, predictions and feedback</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card yellow">
+                <div class="stat-num">{{ total_users }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-num">{{ total_predictions }}</div>
+                <div class="stat-label">Total Predictions</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-num">{{ high_risk }}</div>
+                <div class="stat-label">High Risk Cases</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">{{ feedback|length }}</div>
+                <div class="stat-label">Feedback Received</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('users')">👥 Users ({{ total_users }})</div>
+            <div class="tab" onclick="showTab('predictions')">🏥 Predictions ({{ total_predictions }})</div>
+            <div class="tab" onclick="showTab('feedback')">💬 Feedback ({{ feedback|length }})</div>
+        </div>
+
+        <!-- Users Tab -->
+        <div class="tab-content active" id="tab-users">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>USERNAME</th>
+                        <th>EMAIL</th>
+                        <th>ROLE</th>
+                        <th>JOINED</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>{{ u.id }}</td>
+                        <td><strong>{{ u.username }}</strong></td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            {% if u.is_admin %}
+                            <span class="badge admin">👑 Admin</span>
+                            {% else %}
+                            <span class="badge user">👤 User</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ u.date.strftime('%d %b %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Predictions Tab -->
+        <div class="tab-content" id="tab-predictions">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>DATE</th>
+                        <th>USER</th>
+                        <th>AGE</th>
+                        <th>STAY</th>
+                        <th>MEDS</th>
+                        <th>RISK</th>
+                        <th>PROBABILITY</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in predictions %}
+                    <tr>
+                        <td>{{ p.id }}</td>
+                        <td>{{ p.date.strftime('%d %b %Y') }}</td>
+                        <td>{{ p.user_id or 'Guest' }}</td>
+                        <td>{{ p.age }}</td>
+                        <td>{{ p.time_in_hospital }}d</td>
+                        <td>{{ p.num_medications }}</td>
+                        <td>
+                            <span class="badge {{ 'high' if p.risk == 'HIGH RISK' else 'low' }}">
+                                {{ p.risk }}
+                            </span>
+                        </td>
+                        <td><strong>{{ p.probability }}%</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Feedback Tab -->
+        <div class="tab-content" id="tab-feedback">
+            {% if feedback %}
+                {% for f in feedback %}
+                <div class="feedback-card">
+                    <div class="feedback-header">
+                        <div>
+                            <div class="feedback-name">{{ f.name }} <span style="color:var(--text3);font-weight:400;font-size:12px">— {{ f.email }}</span></div>
+                            <div class="feedback-subject">📌 {{ f.subject }}</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="feedback-rating">{{ f.rating }}</div>
+                            <div style="font-size:11px;color:var(--text3)">{{ f.date.strftime('%d %b %Y') }}</div>
+                        </div>
+                    </div>
+                    <div class="feedback-msg">{{ f.message }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+            <div style="text-align:center;padding:48px;color:var(--text3)">
+                <h3 style="font-family:'Syne',sans-serif;margin-bottom:8px">No feedback yet</h3>
+                <p>Feedback from users will appear here</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer><span>⬡ KORE</span> — Admin Dashboard · Built by Md Faizan Khan</footer>
+
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.dataset.theme === 'dark') { html.dataset.theme = 'light'; btn.textContent = '🌙'; localStorage.setItem('kore_theme', 'light'); }
+            else { html.dataset.theme = 'dark'; btn.textContent = '☀️'; localStorage.setItem('kore_theme', 'dark'); }
+        }
+        const saved = localStorage.getItem('kore_theme');
+        if (saved) { document.documentElement.dataset.theme = saved; document.getElementById('themeBtn').textContent = saved === 'light' ? '🌙' : '☀️'; }
+    </script>
+</body>
+</html>
