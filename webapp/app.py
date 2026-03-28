@@ -320,7 +320,8 @@ def register():
         if existing_user:
             return render_template('register.html', error="Username already exists!")
         hashed_password = generate_password_hash(password)
-        user = User(username=username, email=email, password=hashed_password)
+        is_admin = User.query.count() == 0  # First user becomes admin
+        user = User(username=username, email=email, password=hashed_password, is_admin=is_admin)
         db.session.add(user)
         db.session.commit()
         login_user(user)
