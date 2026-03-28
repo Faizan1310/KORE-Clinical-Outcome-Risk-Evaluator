@@ -17,7 +17,11 @@ app.config['SECRET_KEY'] = 'kore-clinical-outcome-risk-evaluator'
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///predictions.db'
+import os
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///predictions.db')
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
