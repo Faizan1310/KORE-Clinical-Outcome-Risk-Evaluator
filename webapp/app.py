@@ -33,7 +33,8 @@ class Prediction(db.Model):
     ai_report = db.Column(db.Text)
     ai_recommendations = db.Column(db.Text)
     date = db.Column(db.DateTime, default=datetime.utcnow)
-    class Feedback(db.Model):
+
+class Feedback(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     email = db.Column(db.String(100))
