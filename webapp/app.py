@@ -194,7 +194,7 @@ def predict():
     probability = model.predict_proba(full_features)[0][1]
     risk = "HIGH RISK" if probability >= 0.5 else "LOW RISK"
     color = "#e53e3e" if probability >= 0.5 else "#38a169"
-    prob_percent = round(probability * 100, 2)
+    prob_percent = float(round(probability * 100, 2))
 
     patient_data = {
         'age': age, 'gender': 'Male' if gender == 1 else 'Female',
