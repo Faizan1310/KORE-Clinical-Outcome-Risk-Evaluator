@@ -504,15 +504,20 @@
             30-day Readmission Probability: <strong>{{ probability }}%</strong>
         </div>
         {% if prediction %}
-<button type="button" onclick="speakResult()" style="
-    margin-top: 12px; padding: 9px 20px;
-    background: transparent; color: var(--teal);
-    border: 2px solid var(--teal); border-radius: 8px;
-    font-size: 13px; font-weight: 700; cursor: pointer;
-    font-family: 'Syne', sans-serif; transition: all 0.2s;
-">
-    🔊 Read Result Aloud
-</button>
+<div style="display:flex;gap:8px;margin-top:12px;justify-content:center">
+    <button type="button" onclick="speakResult()" style="
+        padding: 9px 20px; background: transparent; color: var(--teal);
+        border: 2px solid var(--teal); border-radius: 8px;
+        font-size: 13px; font-weight: 700; cursor: pointer;
+        font-family: 'Syne', sans-serif;
+    ">🔊 Read Aloud</button>
+    <button type="button" onclick="window.speechSynthesis.cancel()" style="
+        padding: 9px 20px; background: transparent; color: #ff4d6d;
+        border: 2px solid #ff4d6d; border-radius: 8px;
+        font-size: 13px; font-weight: 700; cursor: pointer;
+        font-family: 'Syne', sans-serif;
+    ">⏹ Stop</button>
+</div>
 {% endif %}
         <button onclick="downloadPDF()" style="
             margin-top: 16px;
