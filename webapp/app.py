@@ -162,6 +162,7 @@ def contact():
 @app.route('/predict', methods=['POST'])
 @login_required
 def predict():
+  try:
     age = int(request.form['age'])
     gender = int(request.form['gender'])
     time_in_hospital = int(request.form['time_in_hospital'])
@@ -245,6 +246,8 @@ def predict():
                            diag_val=number_diagnoses,
                            insulin_val='Yes' if insulin == 1 else 'No',
                            change_val='Yes' if change == 1 else 'No')
+  except Exception as e:
+    return f"Prediction error: {str(e)}", 500
 @app.route('/history')
 @login_required
 def history():
