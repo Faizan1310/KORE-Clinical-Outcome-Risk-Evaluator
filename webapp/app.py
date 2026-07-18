@@ -28,7 +28,10 @@ db = SQLAlchemy(app)
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 class Prediction(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id =db.Column(db.Integer, primary_key=True)
+    patient_name = db.Column(db.String(100), nullable=True)
+    patient_id = db.Column(db.String(50), nullable=True)
+    hospital_name = db.Column(db.String(200), nullable=True)
     age = db.Column(db.Integer)
     gender = db.Column(db.String(10))
     time_in_hospital = db.Column(db.Integer)
@@ -163,6 +166,9 @@ def contact():
 @login_required
 def predict():
   try:
+    patient_name = request.form.get('patient_name', 'Unknown')
+    patient_id = request.form.get('patient_id', 'N/A')
+    hospital_name = request.form.get('hospital_name', 'Unknown Hospital')  
     age = int(request.form['age'])
     gender = int(request.form['gender'])
     time_in_hospital = int(request.form['time_in_hospital'])
@@ -211,13 +217,17 @@ def predict():
 
     record = Prediction(
         user_id=current_user.id,
-        age=age, gender=patient_data['gender'],
+        patient_name=patient_name,
+        patient_id=patient_id,
+        hospital_name=hospital_name,
+        age=age,
+        gender='Male' if gender == 1 else 'Female',
         time_in_hospital=time_in_hospital,
         num_medications=num_medications,
         num_lab_procedures=num_lab_procedures,
         number_diagnoses=number_diagnoses,
-        insulin=patient_data['insulin'],
-        change=patient_data['change'],
+        insulin='Yes' if insulin == 1 else 'No',
+        change='Yes' if change == 1 else 'No',
         risk=risk, probability=prob_percent,
         ai_report=ai_report,
         ai_recommendations=ai_recommendations
