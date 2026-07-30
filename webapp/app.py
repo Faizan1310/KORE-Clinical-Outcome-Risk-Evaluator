@@ -376,18 +376,6 @@ def sitemap():
     <url><loc>https://kore-ai-fnf8.onrender.com/about</loc></url>
     <url><loc>https://kore-ai-fnf8.onrender.com/contact</loc></url>
 </urlset>''', 200, {'Content-Type': 'application/xml'}
-
-@app.route('/migrate-columns-kore2026')
-def migrate_columns():
-    try:
-        with db.engine.connect() as conn:
-            conn.execute(db.text('ALTER TABLE prediction ADD COLUMN IF NOT EXISTS patient_name VARCHAR(100)'))
-            conn.execute(db.text('ALTER TABLE prediction ADD COLUMN IF NOT EXISTS patient_id VARCHAR(50)'))
-            conn.execute(db.text('ALTER TABLE prediction ADD COLUMN IF NOT EXISTS hospital_name VARCHAR(200)'))
-            conn.commit()
-        return "Migration successful! New columns added!"
-    except Exception as e:
-        return f"Migration error: {str(e)}"
 @app.route('/migrate-columns-kore2026')
 def migrate_columns():
     try:
